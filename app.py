@@ -11,6 +11,7 @@ from apiInformes import apiInformes
 from apiLogin import apiLogin
 from apiEmpresas import apiEmpresas
 from apiPacientes import apiPacientes
+from modules.turnos import *
 # from apiUsuarios import apiUsuarios
 # from apiFeriados import apiFeriados
 # from apiTiposTramites import apiTiposTramites
@@ -24,6 +25,7 @@ app.register_blueprint(apiInformes, url_prefix='/informes')
 app.register_blueprint(apiLogin, url_prefix='/login')
 app.register_blueprint(apiEmpresas, url_prefix='/empresas')
 app.register_blueprint(apiPacientes, url_prefix='/pacientes')
+app.register_blueprint(turnosBP, url_prefix='/turnos') 
 # app.register_blueprint(apiTiposTramites, url_prefix='/tipostramites')
 app.config['CORS_HEADERS'] = 'Content-Type'
 

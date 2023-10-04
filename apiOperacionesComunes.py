@@ -7,7 +7,7 @@ def respJson(exito,mensaje,datos):
 def verificaToken(token):
     
     if token != "":
-        resultado=apiDB.consultaSelect("Select * from users where binary token='"+token+"'")
+        resultado=apiDB.consultaSelect(f"Select * from users where binary token='{token}'")
         if (len(resultado))==0:
             return False
         else:

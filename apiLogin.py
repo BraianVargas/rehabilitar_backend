@@ -5,10 +5,7 @@ from flask_cors import CORS
 
 apiLogin=Blueprint('apiLogin',__name__)
 
-
 CORS(apiLogin)
-
-
 
 ###################################################################################
 #                               COMPRUEBA TOKEN
@@ -26,12 +23,12 @@ def token():
     token=request.json.get('token', "")
 
     if token != "":
-        resultado=apiDB.consultaSelect("Select * from users where token='"+token+"'")
+        resultado=apiDB.consultaSelect(f"Select * from users where token='{token}'")
         if (len(resultado))==0:
             return jsonify({"success":"fail",'message': "loged user"}), 200
         else:
             return jsonify({"success":"ok",'message': "loged user"}), 200
-    #------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------
 
 ###################################################################################
 #                 LOGIN DE USUARIO (DEVUELVE TOKEN SI ES CORRECTO)
