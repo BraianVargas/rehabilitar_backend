@@ -11,8 +11,9 @@ def genera_comprobante_turno(nombre, dni, fecha_turno, tipo):
     fecha_turno = fecha_turno.replace("/", "-") 
     tipo = tipo.upper()
     
+    
     # Ruta completa al directorio donde deseas guardar el PDF
-    destino = "static/turnos"  # Reemplaza esto con la ruta deseada
+    destino = "modules/turnos/comprobantes"  # Reemplaza esto con la ruta deseada
 
     output_file = os.path.join(destino, f"{tipo}_{fecha_turno}_{dni}.pdf")
     # output_file = f"{tipo}_{fecha_turno}_{dni}.pdf"
