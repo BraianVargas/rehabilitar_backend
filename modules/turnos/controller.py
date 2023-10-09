@@ -46,3 +46,30 @@ def cargaTurno(turno):
         """
         )
     return apiOperacionesComunes.respJson('yes',"El paciente fue guardado correctamente",{})
+    
+def consulta_turno(today):
+    query = apiDB.consultaSelect(f"SELECT * FROM turnos WHERE fecha = '{today}'")
+
+    if query is not None:
+        turnos = []
+        for i in range(len(query)):
+            turno = query[i]
+            paciente = getPaciente(int(turno['paciente_id']))
+            print(paciente[0])
+            print(paciente[0]['apellidos'])
+            print(turno['tipo_examen'])
+            print(turno['fecha'])
+            turno_info = {
+                "paciente_nombre": paciente[0]['nombres'],
+                "paciente_apellido": paciente[0]['apellidos'],
+                "documento": paciente[0]['documento'],
+                "fecha_turno": turno['fecha'],
+                "tipo_turno": turno['tipo_examen']
+            }
+            print(2)
+            # Agrega el turno al resultado.
+            turnos.append(turno_info)
+
+        # Imprime la lista de turnos si es necesario.
+        print(turnos)
+        return turnos
