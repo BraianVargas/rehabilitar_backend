@@ -60,9 +60,7 @@ def get_turnos_dia():
 
           today_date = datetime.date.today()
           date = (str(today_date) + ' 00:00:00')
-          print(date)
           fecha_dt = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S").date()
-          print(fecha_dt)
           turnos = consulta_turno(date)
           return turnos
      except:
