@@ -5,22 +5,34 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle, getSampleS
 from reportlab.platypus.flowables import HRFlowable
 from reportlab.lib.units import inch
 import os
+import string, secrets
+
+###################################################################################
+#              GENERA UN TOKEN UNICO PARA EL USUARIO QUE HACE LOGIN
+###################################################################################
+def fileNameGen():
+    alphabet = string.ascii_letters + string.digits
+    password = ''.join(secrets.choice(alphabet) for i in range(20))
+    return password
 
 def genera_comprobante_turno(nombre, dni, fecha_turno, tipo):
     # Nombre del archivo de salida PDF
     fecha_turno = fecha_turno.replace("/", "-") 
-    tipo = tipo.upper()
+    tipo = tipo.lower()
     
     
     # Ruta completa al directorio donde deseas guardar el PDF
-    destino = "modules/turnos/comprobantes"  # Reemplaza esto con la ruta deseada
+    destino = f"./turnos/{tipo}/{fecha_turno}/"  # Reemplaza esto con la ruta deseada
 
-    output_file = os.path.join(destino, f"{tipo}_{fecha_turno}_{dni}.pdf")
-    print(1)
-    comprobante_path = destino + output_file
-    print(comprobante_path)
-    # output_file = f"{tipo}_{fecha_turno}_{dni}.pdf"
+    if not os.path.exists(destino):
+        os.makedirs(destino)
 
+    # Genera token y regenera en caso de existir
+    fileToken = fileNameGen()
+    while (os.path.exists(destino + fileToken + ".pdf")):
+        fileToken = fileNameGen()
+
+    output_file = os.path.join(destino, f"{fileToken}.pdf")
     # Ruta de la imagen de marca de agua
     marca_de_agua = "static/img/main-logo.png"
     #Tamaño de pagina del PDF 
@@ -69,7 +81,7 @@ def genera_comprobante_turno(nombre, dni, fecha_turno, tipo):
     # Agregar contenido con el formato deseado
     enlace = "<u><a href='/DDJJ'>Enlace a Declaración Jurada</a></u>"
 
-    tipo_paragraph = Paragraph(tipo,tipo_style)
+    tipo_paragraph = Paragraph(tipo.upper(),tipo_style)
     nombre_paragraph = Paragraph("<u>Nombre y Apellido:</u> <br/><br/>" + nombre, nombre_style)
     dni_paragraph = Paragraph("<u>DNI:</u> <br/><br/>" + dni, dni_style)
     fecha_turno_paragraph = Paragraph("<u>Fecha de turno:</u> <br/><br/>" + fecha_turno, fecha_turno_style)
@@ -88,4 +100,5 @@ def genera_comprobante_turno(nombre, dni, fecha_turno, tipo):
 
     # Guardar el contenido en el PDF
     pdf.build(content)
+    return fileToken
 
