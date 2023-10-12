@@ -12,8 +12,9 @@ from .pdf import *
 def nuevoTurno():
      token = request.json.get("token")
      try:
+          print(1)
           if (len(token) != 100):
-               return jsonify({'Error',"No se envió token de usuario o no es correcto"}),404
+               return jsonify({'Error':"No se envió token de usuario o no es correcto"}),404
           if request.method == 'POST':
                if(apiOperacionesComunes.verificaToken(token)): # Si existe usuario con token.
                     paciente_id = request.json.get("turno")['paciente_id']
@@ -25,7 +26,8 @@ def nuevoTurno():
                     fecha=f"{dd}/{mm}/{yyyy}"
                     fecha_dt = datetime.datetime.strptime(fecha, "%d/%m/%Y").date()
                     if verifica_no_turno(paciente_id, fecha_dt): # True si tiene turnos
-                         return jsonify({'no',f"El paciente ya posee turno para la fecha {fecha}"}),405
+                         jsonify
+                         return jsonify({'no':f"El paciente ya posee turno para la fecha {fecha}"}),405
                          
                     if (verifica_habil_feriado(fecha) == "habil"):
                          if (verifica_disponibles(fecha_dt) == True):
@@ -38,14 +40,15 @@ def nuevoTurno():
                                    "tipo_examen":tipo_examen, 
                               }
                               cargaTurno(turno)
+                              print(1)
                               genera_comprobante_turno(nombre, dni, fecha, tipo_examen)
                               return jsonify({"success": "Turno cargado correctamente",}), 200
                          else:
-                              return jsonify({'no',"No quedan turnos disponibles"}),405
+                              return jsonify({'no':"No quedan turnos disponibles"}),405
                     else:
-                         return jsonify({'Prohibido',"La fecha seleccionada no está habilitada para asignar turno"}),401
+                         return jsonify({'Prohibido':"La fecha seleccionada no está habilitada para asignar turno"}),401
                else:
-                    return jsonify({'Error',"No se envió token de usuario o no es correcto"}),404
+                    return jsonify({'Error':"No se envió token de usuario o no es correcto"}),404
      except:
           return jsonify({"Error": "Ha ocurrido un error durante la consulta",}), 500
 
@@ -55,9 +58,7 @@ def get_turnos_dia():
      token = request.json.get("token")
      try:
           if (len(token) != 100):
-               return jsonify({'Error',"No se envió token de usuario o no es correcto"}),404
-
-
+               return jsonify({'Error':"No se envió token de usuario o no es correcto"}),404
           today_date = datetime.date.today()
           date = (str(today_date) + ' 00:00:00')
           fecha_dt = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S").date()
@@ -66,3 +67,19 @@ def get_turnos_dia():
      except:
           return jsonify({"Error": "Ha ocurrido un error durante la consulta",}), 500
      
+
+
+@turnosBP.route('/delete', methods=['GET','POST'])
+def del_turno():
+     token = request.json.get('token')
+     try:
+          if(len(token) != 100):
+               return jsonify({'Error':"No se envió token de usuario o no es correcto"}),404
+          status = delete_turno(request.json.get('turno_id'))
+          if status == True:
+               return jsonify({'Ok':"Turno eliminado correctamente"}),200
+          else:
+               print(1)
+               return jsonify({'Error': "El turno seleccionado no se encontro o no existe"}),500
+     except:
+          return jsonify({"ERROR": "Ha ocurrido un error durante la ejecucion, reintente"}), 500

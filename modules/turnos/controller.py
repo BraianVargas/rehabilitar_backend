@@ -46,7 +46,7 @@ def cargaTurno(turno):
             );
         """
         )
-    return jsonify({'Ok',"El paciente fue guardado correctamente"}),200
+    return jsonify({'Ok':"El paciente fue guardado correctamente"}),200
     
 def consulta_turno(today):
     query = apiDB.consultaSelect(f"SELECT * FROM turnos WHERE fecha = '{today}'")
@@ -64,3 +64,21 @@ def consulta_turno(today):
             }
             turnos.append(turno_info)
         return turnos
+
+def consulta_turno_existente(turno_id):
+    turno = apiDB.consultaSelect(f"SELECT * FROM turnos where id = {turno_id}")
+    if turno!=[]:
+        return True
+    else:
+        return False
+    
+def delete_turno(turno_id):
+    try:
+        if consulta_turno_existente(turno_id) != False:
+            apiDB.consultaEliminar(f"DELETE FROM turnos WHERE id = '{turno_id}';")
+            return True
+        else:
+            return False
+    except:
+        return jsonify({"ERROR": "Ha ocurrido un error durante la ejecucion, reintente"}), 500
+        

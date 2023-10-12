@@ -102,3 +102,19 @@ def consultaGuardar(query,args=None):
     cursor.execute(query,args)
     db.commit()
     db.close()
+
+
+###################################################################################
+#                CONSULTA A DB PARA ELIMINACIÓN
+###################################################################################
+def consultaEliminar(query,args=None):
+    db = mysql.connector.connect(host=server_host,
+                            user=server_user,
+                            passwd=server_passwd,
+                            db=server_db,
+                            port=server_port)
+    cursor = db.cursor(dictionary=True)
+    cursor.execute(query,args)
+    db.commit()
+    db.close()
+        

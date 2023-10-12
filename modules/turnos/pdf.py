@@ -16,6 +16,9 @@ def genera_comprobante_turno(nombre, dni, fecha_turno, tipo):
     destino = "modules/turnos/comprobantes"  # Reemplaza esto con la ruta deseada
 
     output_file = os.path.join(destino, f"{tipo}_{fecha_turno}_{dni}.pdf")
+    print(1)
+    comprobante_path = destino + output_file
+    print(comprobante_path)
     # output_file = f"{tipo}_{fecha_turno}_{dni}.pdf"
 
     # Ruta de la imagen de marca de agua
