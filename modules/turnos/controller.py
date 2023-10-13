@@ -58,6 +58,7 @@ def consulta_turno(today):
             paciente = getPaciente(int(turno['paciente_id']))
             turno_info = {
                 "turno_id": turno['id'],
+                "confirmado": turno['confirmado'],
                 "paciente_nombre": paciente[0]['nombres'],
                 "paciente_apellido": paciente[0]['apellidos'],
                 "documento": paciente[0]['documento'],
