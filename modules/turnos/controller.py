@@ -8,9 +8,10 @@ def verifica_habil_feriado(fecha):
     pais = "AR"  
     feriados = holidays.CountryHoliday(pais)
     fecha_dt = datetime.datetime.strptime(fecha, "%d/%m/%Y").date()
-    
+    print(fecha_dt)
     if fecha_dt in feriados:
-        return "feriado"
+        if fecha_dt.weekday() < 5:  # 0 es lunes, 4 es viernes
+            return "habil"
     else:
         if fecha_dt.weekday() < 5:  # 0 es lunes, 4 es viernes
             return "habil"
