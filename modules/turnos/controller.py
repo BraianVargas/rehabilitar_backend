@@ -56,6 +56,7 @@ def consulta_turno(today):
             turno = query[i]
             paciente = getPaciente(int(turno['paciente_id']))
             turno_info = {
+                "turno_id": turno['id'],
                 "paciente_nombre": paciente[0]['nombres'],
                 "paciente_apellido": paciente[0]['apellidos'],
                 "documento": paciente[0]['documento'],
@@ -83,3 +84,13 @@ def delete_turno(turno_id):
     except:
         return jsonify({"ERROR": "Ha ocurrido un error durante la ejecucion, reintente"}), 500
         
+def confirma_turno(turno_id):
+    dataTurno = apiDB.consultaSelect(f"Select * from turnos where id = {turno_id}")
+    if dataTurno != None:
+        try:
+            apiDB.consultaGuardar(f"update turnos set confirmado=1 where id={turno_id};")
+            return True
+        except:
+            return False
+    else:
+        return False

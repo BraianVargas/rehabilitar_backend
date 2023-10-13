@@ -89,7 +89,22 @@ def del_turno():
           if status == True:
                return jsonify({'Ok':"Turno eliminado correctamente"}),200
           else:
-               print(1)
                return jsonify({'Error': "El turno seleccionado no se encontro o no existe"}),500
+     except:
+          return jsonify({"ERROR": "Ha ocurrido un error durante la ejecucion, reintente"}), 500
+
+
+@turnosBP.route('/confirma', methods=["POST"])
+def conf_turno():
+     token = request.json.get('token')
+     try:
+          if(len(token) != 100):
+               return jsonify({'Error':"No se envió token de usuario o no es correcto"}),404
+          turno_id = request.json.get('turno_id')
+          status = confirma_turno(turno_id)
+          if status == True:
+               return jsonify({'Ok':"Turno confirmado correctamente"}),200
+          else:
+               return jsonify({'Error': "El turno seleccionado no se actualizo correctamente"}),500
      except:
           return jsonify({"ERROR": "Ha ocurrido un error durante la ejecucion, reintente"}), 500
