@@ -8,9 +8,10 @@ def verifica_habil_feriado(fecha):
     pais = "AR"  
     feriados = holidays.CountryHoliday(pais)
     fecha_dt = datetime.datetime.strptime(fecha, "%d/%m/%Y").date()
-    
+    print(fecha_dt)
     if fecha_dt in feriados:
-        return "feriado"
+        if fecha_dt.weekday() < 5:  # 0 es lunes, 4 es viernes
+            return "habil"
     else:
         if fecha_dt.weekday() < 5:  # 0 es lunes, 4 es viernes
             return "habil"
@@ -39,10 +40,10 @@ def getPaciente(paciente_id):
     paciente = apiDB.consultaSelect(f"select * from pacientes where id = '{paciente_id}'")
     return paciente
 
-def cargaTurno(turno):
+def cargaTurno(turno,filetoken):
     apiDB.consultaGuardar(
-        f"""insert into turnos (paciente_id,fecha,tipo_examen) values (
-            {turno['paciente_id']},'{turno['fecha']}','{turno['tipo_examen']}'
+        f"""insert into turnos (paciente_id,fecha,tipo_examen,created_at,file_token) values (
+            {turno['paciente_id']},'{turno['fecha']}','{turno['tipo_examen']}','{datetime.datetime.now()}','{filetoken}'
             );
         """
         )
@@ -56,11 +57,14 @@ def consulta_turno(today):
             turno = query[i]
             paciente = getPaciente(int(turno['paciente_id']))
             turno_info = {
+                "turno_id": turno['id'],
+                "confirmado": turno['confirmado'],
                 "paciente_nombre": paciente[0]['nombres'],
                 "paciente_apellido": paciente[0]['apellidos'],
                 "documento": paciente[0]['documento'],
                 "fecha_turno": turno['fecha'],
-                "tipo_turno": turno['tipo_examen']
+                "tipo_turno": turno['tipo_examen'],
+                "file_token":turno['file_token']
             }
             turnos.append(turno_info)
         return turnos
@@ -82,3 +86,13 @@ def delete_turno(turno_id):
     except:
         return jsonify({"ERROR": "Ha ocurrido un error durante la ejecucion, reintente"}), 500
         
+def confirma_turno(turno_id):
+    dataTurno = apiDB.consultaSelect(f"Select * from turnos where id = {turno_id}")
+    if dataTurno != None:
+        try:
+            apiDB.consultaGuardar(f"update turnos set confirmado=1 where id={turno_id};")
+            return True
+        except:
+            return False
+    else:
+        return False
