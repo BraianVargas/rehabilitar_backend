@@ -100,8 +100,11 @@ def consultaGuardar(query,args=None):
                              port=server_port)
     cursor = db.cursor(dictionary=True)
     cursor.execute(query,args)
+    cursor.execute("select last_insert_id();")
+    id = cursor.fetchall()
     db.commit()
     db.close()
+    return id
 
 
 ###################################################################################

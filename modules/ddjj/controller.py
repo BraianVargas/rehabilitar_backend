@@ -1,21 +1,23 @@
 from flask import jsonify
+import apiOperacionesComunes, apiDB
 
 
-def procesar_datos(_dni, token, datos_frontend):
+def save_ddjj(data,paciente_id):
     try:
-        # Realiza validaciones adicionales del token si es necesario
-        if not token:
-            return jsonify({'Error': "Token no proporcionado"}), 400
-        if len(token) != 100:
-            return jsonify({'Error': "Token no válido"}), 400
+        keys = list(data.keys())
+        values = list(data.values())
 
-        # Procesa los datos del frontend
-        # Aquí puedes realizar validaciones, almacenarlos en una base de datos, etc.
+        formatted_values = []
+        for value in values:
+            if isinstance(value, bool):
+                formatted_values.append(str(value).lower())
+            else:
+                formatted_values.append(f'"{value}"')
 
-        # Ejemplo: almacenar datos en una base de datos
-        # db.guardar_datos(_dni, datos_frontend)
-
-        # Devuelve una respuesta exitosa
+        query = f'INSERT INTO ddjj ({", ".join(keys)}) VALUES ({", ".join(formatted_values)});'
+        ddjj_id = apiDB.consultaGuardar(query)
+        query = f"insert into fact_ddjj (ddjj_id, paciente_id) values ({paciente_id},{ddjj_id[0]['last_insert_id()']})"
+        apiDB.consultaGuardar(query)
         return jsonify({'Mensaje': 'Datos procesados exitosamente'}), 200
 
     except Exception as e:

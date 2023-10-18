@@ -1,4 +1,6 @@
+
 create table ddjj(
+	id INT PRIMARY KEY AUTO_INCREMENT,
     accidente_transito BOOLEAN,
     fuma BOOLEAN,
     d_fuma INT,
@@ -37,11 +39,6 @@ create table ddjj(
     corazon BOOLEAN,
     rodillas BOOLEAN,
     tobillos BOOLEAN,
-    hombros BOOLEAN
-);
-
-CREATE TABLE fact_ddjj(
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    ddjj_id int,
-    paciente_id int
+    hombros BOOLEAN,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
