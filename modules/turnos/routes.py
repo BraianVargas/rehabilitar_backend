@@ -24,7 +24,6 @@ def nuevoTurno():
                     fecha=f"{dd}/{mm}/{yyyy}"
                     fecha_dt = datetime.datetime.strptime(fecha, "%d/%m/%Y").date()
                     if verifica_no_turno(paciente_id, fecha_dt): # True si tiene turnos
-                         jsonify
                          return jsonify({'no':f"El paciente ya posee turno para la fecha {fecha}"}),405
                     if (verifica_habil_feriado(fecha) == "habil"):
                          if (verifica_disponibles(fecha_dt) == True):

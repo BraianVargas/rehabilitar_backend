@@ -5,7 +5,7 @@ import os
 import secrets
 import string
 import apiOperacionesComunes,apiDB
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 
 from werkzeug.utils import secure_filename
 apiPacientes=Blueprint('apiPacientes',__name__)
@@ -66,7 +66,7 @@ def get_ByDoc(_doc):
     return apiOperacionesComunes.respJson('yes',"Listado de empresas con cuit " + _doc,{'listado':listado})
 
 @apiPacientes.route('/new',methods=['POST'])            
-def new():                
+def new():
     #obtendo los datos que vienen en json
     token = request.json.get("token")
     data = request.json.get("data")
@@ -79,22 +79,25 @@ def new():
     fecha_nacimiento   =data["fecha_nacimiento"]
     #verifico token
     try:
-        
         if len(token)!=100:
             return apiOperacionesComunes.respJson('no',"No se envió token de usuario o no es correcto",{})
         if not (apiOperacionesComunes.verificaToken(token)):
             return apiOperacionesComunes.respJson('no',"El token no es correcto o a expirado",{})
-
     except:
         return apiOperacionesComunes.respJson('no',"El token no es correcto o a expirado",{})
-        
-    apiDB.consultaGuardar("""insert into pacientes (
-            apellidos,
-            nombres,
-            documento,
-            celular,
-            telefono,
-            domicilio,
-            fecha_nacimiento
-        ) values (%s,%s,%s,%s,%s,%s,%s)""",([apellidos,nombres,documento,celular,telefono,domicilio,fecha_nacimiento]))
-    return apiOperacionesComunes.respJson('yes',"El paciente fue guardado correctamente",{})
+    
+    data_paciente = apiDB.consultaSelect("Select * from pacientes where documento = %s",[(str(documento))])
+    if len(data_paciente) == 0:
+        apiDB.consultaGuardar("""insert into pacientes (
+                apellidos,
+                nombres,
+                documento,
+                celular,
+                telefono,
+                domicilio,
+                fecha_nacimiento
+            ) values (%s,%s,%s,%s,%s,%s,%s)""",([apellidos,nombres,documento,celular,telefono,domicilio,fecha_nacimiento]))
+        return apiOperacionesComunes.respJson('yes',"El paciente fue guardado correctamente",{})
+    else:
+        return jsonify({'Prohibido':f"El usuario con documento {documento} ya fue cargado "}),401
+
