@@ -100,7 +100,9 @@ def conf_turno():
           if(len(token) != 100):
                return jsonify({'Error':"No se envió token de usuario o no es correcto"}),404
           turno_id = request.json.get('turno_id')
-          status = confirma_turno(turno_id)
+          confirma = request.json.get('confirma')
+
+          status = confirma_turno(turno_id,confirma)
           if status == True:
                return jsonify({'Ok':"Turno confirmado correctamente"}),200
           else:

@@ -86,11 +86,11 @@ def delete_turno(turno_id):
     except:
         return jsonify({"ERROR": "Ha ocurrido un error durante la ejecucion, reintente"}), 500
         
-def confirma_turno(turno_id):
+def confirma_turno(turno_id, confirma):
     dataTurno = apiDB.consultaSelect(f"Select * from turnos where id = {turno_id}")
     if dataTurno != None:
         try:
-            apiDB.consultaGuardar(f"update turnos set confirmado=1 where id={turno_id};")
+            apiDB.consultaGuardar(f"update turnos set confirmado={confirma} where id={turno_id};")
             return True
         except:
             return False

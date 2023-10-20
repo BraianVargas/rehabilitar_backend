@@ -16,7 +16,7 @@ def save_ddjj(data,paciente_id):
 
         query = f'INSERT INTO ddjj ({", ".join(keys)}) VALUES ({", ".join(formatted_values)});'
         ddjj_id = apiDB.consultaGuardar(query)
-        query = f"insert into fact_ddjj (ddjj_id, paciente_id) values ({paciente_id},{ddjj_id[0]['last_insert_id()']})"
+        query = f"insert into fact_ddjj (ddjj_id, paciente_id) values ({ddjj_id[0]['last_insert_id()']},{paciente_id})"
         apiDB.consultaGuardar(query)
         return jsonify({'Mensaje': 'Datos procesados exitosamente'}), 200
 
