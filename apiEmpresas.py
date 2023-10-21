@@ -5,7 +5,7 @@ import os
 import secrets
 import string
 import apiOperacionesComunes,apiDB
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 
 from werkzeug.utils import secure_filename
 apiEmpresas=Blueprint('apiEmpresas',__name__)
@@ -78,14 +78,19 @@ def new():
     contacto=data["contacto"]
     #verifico token
     try:
-        
         if len(token)!=100:
             return apiOperacionesComunes.respJson('no',"No se envió token de usuario o no es correcto",{})
         if not (apiOperacionesComunes.verificaToken(token)):
             return apiOperacionesComunes.respJson('no',"El token no es correcto o a expirado",{})
-
     except:
         return apiOperacionesComunes.respJson('no',"El token no es correcto o a expirado",{})
-        
-    apiDB.consultaGuardar("insert into empresas (razonsocial,cuit,domicilio,telefono,mail,contacto) values (%s,%s,%s,%s,%s,%s)",([razonsocial,cuit,direccion,telefono,mail,contacto]))
-    return apiOperacionesComunes.respJson('yes',"La empresa fue guardada correctamente",{})
+    # VERIFICO RAZONSOCIAL NO CREADA
+    try:
+        empresa = apiDB.consultaSelect(f"select * from empresas where razonsocial={razonsocial}")
+        if len(empresa)!=0:
+            return jsonify({"error":"La empresa se cargo con anterioridad."}),401
+        else:
+            apiDB.consultaGuardar("insert into empresas (razonsocial,cuit,domicilio,telefono,mail,contacto) values (%s,%s,%s,%s,%s,%s)",([razonsocial,cuit,direccion,telefono,mail,contacto]))
+            return apiOperacionesComunes.respJson('yes',"La empresa fue guardada correctamente",{})
+    except:
+        return jsonify({"error":"ocurrio un error durante la consulta."}), 500
