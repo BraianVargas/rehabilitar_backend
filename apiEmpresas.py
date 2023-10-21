@@ -84,9 +84,10 @@ def new():
             return apiOperacionesComunes.respJson('no',"El token no es correcto o a expirado",{})
     except:
         return apiOperacionesComunes.respJson('no',"El token no es correcto o a expirado",{})
+    
     # VERIFICO RAZONSOCIAL NO CREADA
     try:
-        empresa = apiDB.consultaSelect(f"select * from empresas where razonsocial={razonsocial}")
+        empresa = apiDB.consultaSelect(f"select * from empresas where razonsocial='{razonsocial}'")
         if len(empresa)!=0:
             return jsonify({"error":"La empresa se cargo con anterioridad."}),401
         else:
