@@ -79,7 +79,7 @@ def consulta_turno_existente(turno_id):
 def delete_turno(turno_id):
     try:
         if consulta_turno_existente(turno_id) != False:
-            apiDB.consultaEliminar(f"DELETE FROM turnos WHERE id = '{turno_id}';")
+            apiDB.consultaGuardar(f"update turnos set deleted='1' where id = 36;'{turno_id}';")
             return True
         else:
             return False

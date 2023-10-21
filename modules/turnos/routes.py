@@ -25,23 +25,23 @@ def nuevoTurno():
                     fecha_dt = datetime.datetime.strptime(fecha, "%d/%m/%Y").date()
                     if verifica_no_turno(paciente_id, fecha_dt): # True si tiene turnos
                          return jsonify({'no':f"El paciente ya posee turno para la fecha {fecha}"}),405
-                    if (verifica_habil_feriado(fecha) == "habil"):
-                         if (verifica_disponibles(fecha_dt) == True):
-                              paciente = getPaciente(paciente_id)
-                              nombre = f"{paciente[0]['nombres']} {paciente[0]['apellidos']}"
-                              dni = paciente[0]['documento']
-                              turno = {
-                                   "paciente_id":paciente_id,
-                                   "fecha":fecha_dt,
-                                   "tipo_examen":tipo_examen, 
-                              }
-                              filetoken = genera_comprobante_turno(nombre, dni, fecha, tipo_examen)
-                              cargaTurno(turno, filetoken)
-                              return jsonify({"success": "Turno cargado correctamente",}), 200
-                         else:
-                              return jsonify({'no':"No quedan turnos disponibles"}),405
+                    # if (verifica_habil_feriado(fecha) == "habil"):
+                    if (verifica_disponibles(fecha_dt) == True):
+                         paciente = getPaciente(paciente_id)
+                         nombre = f"{paciente[0]['nombres']} {paciente[0]['apellidos']}"
+                         dni = paciente[0]['documento']
+                         turno = {
+                              "paciente_id":paciente_id,
+                              "fecha":fecha_dt,
+                              "tipo_examen":tipo_examen, 
+                         }
+                         filetoken = genera_comprobante_turno(nombre, dni, fecha, tipo_examen)
+                         cargaTurno(turno, filetoken)
+                         return jsonify({"success": "Turno cargado correctamente",}), 200
                     else:
-                         return jsonify({'Prohibido':"La fecha seleccionada no está habilitada para asignar turno"}),401
+                         return jsonify({'no':"No quedan turnos disponibles"}),405
+                    # else:
+                    #      return jsonify({'Prohibido':"La fecha seleccionada no está habilitada para asignar turno"}),401
                else:
                     return jsonify({'Error':"No se envió token de usuario o no es correcto"}),404
      except:
