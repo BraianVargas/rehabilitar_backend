@@ -2,6 +2,7 @@ import apiDB
 import mysql.connector
 from flask import Blueprint,  jsonify, request
 from flask_cors import CORS
+import datetime
 
 apiLogin=Blueprint('apiLogin',__name__)
 
@@ -36,10 +37,8 @@ def token():
 @apiLogin.route('/', methods=['POST'])
 def login():
     try:
-        print(request.json.get("data"))
         usrname=request.json.get("data")['username']
-        
-        password=request.json.get("data")['password']    
+        password=request.json.get("data")['password']
     except:
         resultado=jsonify({"success":"fail",'message': "no envió usrname o pasword"})
         resultado.headers.add('Access-Control-Allow-Origin', '*')
@@ -57,10 +56,41 @@ def login():
     try:
         result=apiDB.consultaSelect(query,(usrname,password)) #cursor.fetchall()
         if (len(result)) > 0:
-            nuevotoken=apiDB.tokengen()
-            texto={"success":"yes","usuario":result[0],"token":nuevotoken}
-            #cursor = db.cursor(dictionary=True)
-            query="update users set token=%s,last_login=NOW() where id=%s"
+            current_time = datetime.datetime.now()
+            last_login=apiDB.consultaSelect(f"select last_login from users where id = '{result[0]['id']}'")
+            current_token=apiDB.consultaSelect(f"select token from users where id = '{result[0]['id']}'")
+            print(f"Current token: {current_token}")
+            time_difference = current_time - last_login[0]['last_login']
+            if(current_token[0]['token'])=='': #Es primer ingreso
+                nuevotoken=apiDB.tokengen()
+
+                print("Primer Ingreso")
+                query="update users set token=%s,last_login=NOW() where id=%s"
+                apiDB.consultaGuardar(query,(nuevotoken,str(result[0]['id'])))
+                texto={"success":"yes","usuario":result[0],"token":nuevotoken}
+                response=jsonify(texto)
+                response.headers.add('Access-Control-Allow-Origin', '*')
+                return response,201
+            else:
+                print("Primer Ingreso else")
+
+                if (int(time_difference.total_seconds()) > 3600): #pasó una hora desde el ultimo lógin 
+                    nuevotoken=apiDB.tokengen()
+                    query="update users set token=%s,last_login=NOW() where id=%s"
+                    apiDB.consultaGuardar(query,(nuevotoken,str(result[0]['id'])))
+                    texto={"success":"yes","usuario":result[0],"token":nuevotoken}
+                    response=jsonify(texto)
+                    response.headers.add('Access-Control-Allow-Origin', '*')
+                    return response,201
+                else:
+                    print("Ingreso con token actual")
+                    print(f"Current token 1: {current_token}")
+                    print(int(time_difference.total_seconds()))
+                    texto={"success":"yes","usuario":result[0],"token":current_token[0]['token']}
+                    response=jsonify(texto)
+                    response.headers.add('Access-Control-Allow-Origin', '*')
+                    return response,201
+                    
             #cursor.execute(query,(nuevotoken,result[0]['id']))
             #db.commit()
             apiDB.consultaGuardar(query,(nuevotoken,str(result[0]['id'])))

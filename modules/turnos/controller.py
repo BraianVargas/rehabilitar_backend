@@ -71,7 +71,7 @@ def consulta_turno(today):
 
 def consulta_turno_existente(turno_id):
     turno = apiDB.consultaSelect(f"SELECT * FROM turnos where id = {turno_id}")
-    if turno!=[]:
+    if len(turno)!=0:
         return True
     else:
         return False
@@ -79,7 +79,7 @@ def consulta_turno_existente(turno_id):
 def delete_turno(turno_id):
     try:
         if consulta_turno_existente(turno_id) != False:
-            apiDB.consultaGuardar(f"update turnos set deleted='1' where id = 36;'{turno_id}';")
+            apiDB.consultaUpdate(f"update turnos set deleted='1' where id ='{turno_id}';")
             return True
         else:
             return False
@@ -90,7 +90,7 @@ def confirma_turno(turno_id, confirma):
     dataTurno = apiDB.consultaSelect(f"Select * from turnos where id = {turno_id}")
     if dataTurno != None:
         try:
-            apiDB.consultaGuardar(f"update turnos set confirmado={confirma} where id={turno_id};")
+            apiDB.consultaUpdate(f"update turnos set confirmado={confirma} where id={turno_id};")
             return True
         except:
             return False

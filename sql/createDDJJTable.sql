@@ -40,5 +40,6 @@ create table ddjj(
     rodillas BOOLEAN,
     tobillos BOOLEAN,
     hombros BOOLEAN,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    token VARCHAR(150)
 );

@@ -6,6 +6,8 @@ from reportlab.platypus.flowables import HRFlowable
 from reportlab.lib.units import inch
 import os
 import string, secrets
+from config.config import *
+
 
 ###################################################################################
 #              GENERA UN TOKEN UNICO PARA EL USUARIO QUE HACE LOGIN
@@ -79,7 +81,7 @@ def genera_comprobante_turno(nombre, dni, fecha_turno, tipo):
     content = []
 
     # Agregar contenido con el formato deseado
-    enlace = "<u><a href='/DDJJ'>Enlace a Declaración Jurada</a></u>"
+    enlace = f'<a href="{ROOT_PATH}/ddjj/{dni}"> Enlace a Declaración Jurada</a>'
 
     tipo_paragraph = Paragraph(tipo.upper(),tipo_style)
     nombre_paragraph = Paragraph("<u>Nombre y Apellido:</u> <br/><br/>" + nombre, nombre_style)

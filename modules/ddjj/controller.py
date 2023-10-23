@@ -1,6 +1,11 @@
 from flask import jsonify
 import apiOperacionesComunes, apiDB
+import string, secrets
 
+def tokenGen():
+    alphabet = string.ascii_letters + string.digits
+    tk = ''.join(secrets.choice(alphabet) for i in range(20))
+    return tk
 
 def save_ddjj(data,paciente_id):
     try:
@@ -13,10 +18,10 @@ def save_ddjj(data,paciente_id):
                 formatted_values.append(str(value).lower())
             else:
                 formatted_values.append(f'"{value}"')
-
-        query = f'INSERT INTO ddjj ({", ".join(keys)}) VALUES ({", ".join(formatted_values)});'
+        ddjj_token = tokenGen()
+        query = f'INSERT INTO ddjj ({", ".join(keys)}, token) VALUES ({", ".join(formatted_values)}, "{ddjj_token}");'
         ddjj_id = apiDB.consultaGuardar(query)
-        query = f"insert into fact_ddjj (ddjj_id, paciente_id) values ({ddjj_id[0]['last_insert_id()']},{paciente_id})"
+        query = f"insert into fact_ddjj (ddjj_id, paciente_id, token_ddjj) values ({ddjj_id[0]['last_insert_id()']},{paciente_id},'{ddjj_token}')"
         apiDB.consultaGuardar(query)
         return jsonify({'Mensaje': 'Datos procesados exitosamente'}), 200
 

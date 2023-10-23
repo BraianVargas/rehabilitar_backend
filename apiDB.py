@@ -3,17 +3,7 @@ import string
 import secrets
 import os
 import mysql.connector
-##################################################
-###DATOS DEL SERVIDOR DE BASE DE DATOS
-################################################
-
-
-server_host="vctest.dyndns.org"
-server_user="rehabilitardb"
-server_passwd='Rehabilitar23!'
-server_db='rehabilitar'
-server_port=13306
-
+from config.config import *
 
 ###################################################################################
 #              GENERA UN TOKEN UNICO PARA EL USUARIO QUE HACE LOGIN
@@ -105,6 +95,20 @@ def consultaGuardar(query,args=None):
     db.commit()
     db.close()
     return id
+
+###################################################################################
+#                CONSULTA A DB PARA INSERCION O ACTUALIZACION
+###################################################################################
+def consultaUpdate(query,args=None):
+    db = mysql.connector.connect(host=server_host,
+                             user=server_user,
+                             passwd=server_passwd,
+                             db=server_db,
+                             port=server_port)
+    cursor = db.cursor(dictionary=True)
+    cursor.execute(query,args)
+    db.commit()
+    db.close()
 
 
 ###################################################################################

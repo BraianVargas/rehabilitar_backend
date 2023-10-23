@@ -25,6 +25,8 @@ def nuevoTurno():
                     fecha_dt = datetime.datetime.strptime(fecha, "%d/%m/%Y").date()
                     if verifica_no_turno(paciente_id, fecha_dt): # True si tiene turnos
                          return jsonify({'no':f"El paciente ya posee turno para la fecha {fecha}"}),405
+                    if not (apiOperacionesComunes.verificaToken(token)):
+                         return apiOperacionesComunes.respJson('no',"El token no es correcto o a expirado",{})
                     # if (verifica_habil_feriado(fecha) == "habil"):
                     if (verifica_disponibles(fecha_dt) == True):
                          paciente = getPaciente(paciente_id)
@@ -55,6 +57,8 @@ def get_turnos_dia():
      try:
           if (len(token) != 100):
                return jsonify({'Error':"No se envió token de usuario o no es correcto"}),404
+          if not (apiOperacionesComunes.verificaToken(token)):
+               return apiOperacionesComunes.respJson('no',"El token no es correcto o a expirado",{})
           if request.method == "POST":
                today_date = datetime.date.today()
                date = (str(today_date) + ' 00:00:00')
@@ -84,7 +88,9 @@ def del_turno():
      try:
           if(len(token) != 100):
                return jsonify({'Error':"No se envió token de usuario o no es correcto"}),404
-          status = delete_turno(request.json.get('turno_id'))
+          if not (apiOperacionesComunes.verificaToken(token)):
+               return apiOperacionesComunes.respJson('no',"El token no es correcto o a expirado",{})
+          status = (bool(delete_turno(request.json.get('turno_id'))))
           if status == True:
                return jsonify({'Ok':"Turno eliminado correctamente"}),200
           else:
@@ -99,6 +105,8 @@ def conf_turno():
      try:
           if(len(token) != 100):
                return jsonify({'Error':"No se envió token de usuario o no es correcto"}),404
+          if not (apiOperacionesComunes.verificaToken(token)):
+               return apiOperacionesComunes.respJson('no',"El token no es correcto o a expirado",{})
           turno_id = request.json.get('turno_id')
           confirma = request.json.get('confirma')
 
