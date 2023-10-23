@@ -62,8 +62,8 @@ def get_turnos_dia():
                date = (str(today_date) + ' 00:00:00')
                turnos = consulta_turno(date)
           return turnos
-     except:
-          return jsonify({"Error": "Ha ocurrido un error durante la consulta",}), 500
+     except Exception as e:
+          return jsonify({"Error": f"{e}",}), 500
      
 
 @turnosBP.route('/<string:_token>',methods=['GET'])            
