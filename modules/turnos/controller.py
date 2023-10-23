@@ -18,8 +18,8 @@ def verifica_habil_feriado(fecha):
         else:
             return "fin de semana"
     
-def verifica_no_turno(paciente_id,fecha):
-    turnos = apiDB.consultaSelect(f"select count(*) from turnos where paciente_id = {paciente_id} and fecha = '{fecha}'")
+def verifica_no_turno(paciente_id,empresa_id,fecha):
+    turnos = apiDB.consultaSelect(f"select count(*) from turnos where paciente_id={paciente_id} and empresa_id='{empresa_id}' and fecha='{fecha}';")
     
     if int(turnos[0]['count(*)']) >= 1:
         return True
@@ -42,8 +42,8 @@ def getPaciente(paciente_id):
 
 def cargaTurno(turno,filetoken):
     apiDB.consultaGuardar(
-        f"""insert into turnos (paciente_id,fecha,tipo_examen,created_at,file_token) values (
-            {turno['paciente_id']},'{turno['fecha']}','{turno['tipo_examen']}','{datetime.datetime.now()}','{filetoken}'
+        f"""insert into turnos (paciente_id,empresa_id,fecha,tipo_examen,created_at,file_token) values (
+            {turno['paciente_id']},{turno['empresa_id']},'{turno['fecha']}','{turno['tipo_examen']}','{datetime.datetime.now()}','{filetoken}'
             );
         """
         )
@@ -51,13 +51,20 @@ def cargaTurno(turno,filetoken):
     
 def consulta_turno(today):
     query = apiDB.consultaSelect(f"SELECT * FROM turnos WHERE fecha = '{today}'")
+    
     if query is not None:
         turnos = []
         for i in range(len(query)):
             turno = query[i]
+            name = apiDB.consultaSelect(f"SELECT razonsocial FROM empresas WHERE id={turno['empresa_id']}")
+            if len(name)!=0:
+                empresa_name = name[0]['razonsocial']
+            else:
+                empresa_name = ''
             paciente = getPaciente(int(turno['paciente_id']))
             turno_info = {
                 "turno_id": turno['id'],
+                "empresa": empresa_name,
                 "confirmado": turno['confirmado'],
                 "paciente_nombre": paciente[0]['nombres'],
                 "paciente_apellido": paciente[0]['apellidos'],

@@ -17,7 +17,7 @@ def fileNameGen():
     password = ''.join(secrets.choice(alphabet) for i in range(20))
     return password
 
-def genera_comprobante_turno(nombre, dni, fecha_turno, tipo):
+def genera_comprobante_turno(nombre, dni, fecha_turno, tipo, empresa_id):
     # Nombre del archivo de salida PDF
     fecha_turno = fecha_turno.replace("/", "-") 
     tipo = tipo.lower()
@@ -81,7 +81,8 @@ def genera_comprobante_turno(nombre, dni, fecha_turno, tipo):
     content = []
 
     # Agregar contenido con el formato deseado
-    enlace = f'<a href="{ROOT_PATH}/ddjj/{dni}"> Enlace a Declaración Jurada</a>'
+    # enlace = f'<a href="{ROOT_PATH}/ddjj/{dni}"> Enlace a Declaración Jurada</a>'
+    enlace = f'<a href="{ROOT_PATH}/ddjj/?dni={dni}&empresa_id={empresa_id}"> Enlace a Declaración Jurada</a>'
 
     tipo_paragraph = Paragraph(tipo.upper(),tipo_style)
     nombre_paragraph = Paragraph("<u>Nombre y Apellido:</u> <br/><br/>" + nombre, nombre_style)
