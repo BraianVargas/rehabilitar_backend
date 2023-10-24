@@ -82,14 +82,14 @@ def genera_comprobante_turno(nombre, dni, fecha_turno, tipo, empresa_id):
 
     # Agregar contenido con el formato deseado
     # enlace = f'<a href="{ROOT_PATH}/ddjj/{dni}"> Enlace a Declaración Jurada</a>'
-    enlace = f"{ROOT_PATH}/ddjj/nueva?dni={dni}&empresa_id={empresa_id}"
+    # enlace = f"{ROOT_PATH}/ddjj/nueva?dni={dni}&empresa_id={empresa_id}"
     btn_enlace=f'<a href="{ROOT_PATH}/ddjj/nueva?dni={dni}&empresa_id={empresa_id}"> Enlace a Declaración Jurada</a>'
     tipo_paragraph = Paragraph(tipo.upper(),tipo_style)
     nombre_paragraph = Paragraph("<u>Nombre y Apellido:</u> <br/><br/>" + nombre, nombre_style)
     dni_paragraph = Paragraph("<u>DNI:</u> <br/><br/>" + dni, dni_style)
     fecha_turno_paragraph = Paragraph("<u>Fecha de turno:</u> <br/><br/>" + fecha_turno, fecha_turno_style)
     enlace_paragraph = Paragraph(btn_enlace, enlace_style)
-    enlace_paragraph2 = Paragraph(enlace, enlace_style)
+    # enlace_paragraph2 = Paragraph(enlace, enlace_style)
 
     content.append(Spacer(1, 15))
     content.append(tipo_paragraph)
@@ -101,8 +101,8 @@ def genera_comprobante_turno(nombre, dni, fecha_turno, tipo, empresa_id):
     content.append(fecha_turno_paragraph)
     content.append(Spacer(1, 10))
     content.append(enlace_paragraph)
-    content.append(Spacer(1, 10))
-    content.append(enlace_paragraph2)
+    # content.append(Spacer(1, 10))
+    # content.append(enlace_paragraph2)
 
     # Guardar el contenido en el PDF
     pdf.build(content)
