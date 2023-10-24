@@ -10,7 +10,10 @@ def respJson(exito,mensaje,datos):
 def verifica_actividad(user, token):
     last_activity = apiDB.consultaSelect(f"SELECT last_activity FROM users WHERE token = '{user[0]['token']}'")[0]['last_activity']
     current_time = datetime.datetime.now()
-    time_difference = (current_time - last_activity).total_seconds()
+    if last_activity!=None:
+        time_difference = (current_time - last_activity).total_seconds()
+    else:
+        time_difference = 0
 
     if time_difference > 3600:  # Pasó una hora desde la última actividad
         return False
