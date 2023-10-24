@@ -56,6 +56,7 @@ def login():
     #cursor.execute(query,(usrname,password))
     try:
         result=apiDB.consultaSelect(query,(usrname,password)) #cursor.fetchall()
+        print(result)
         if (len(result)) > 0:
             current_token=apiDB.consultaSelect(f"select token from users where id = '{result[0]['id']}'")
             

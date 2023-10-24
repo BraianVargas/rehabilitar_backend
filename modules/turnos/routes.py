@@ -19,6 +19,7 @@ def nuevoTurno():
                paciente_id = request.json.get("turno")['paciente_id']
                empresa_id = request.json.get("turno")['empresa_id']
                tipo_examen = request.json.get("turno")['tipo_examen']
+               observaciones = request.json.get("turno")['observaciones']
                dd = request.json.get("turno")['day']
                mm = request.json.get('turno')["month"]
                yyyy = request.json.get("turno")['year']
@@ -38,6 +39,7 @@ def nuevoTurno():
                          "empresa_id":empresa_id,
                          "fecha":fecha_dt,
                          "tipo_examen":tipo_examen, 
+                         "observaciones":observaciones, 
                     }
                     filetoken = genera_comprobante_turno(nombre, dni, fecha, tipo_examen, empresa_id)
                     cargaTurno(turno, filetoken)

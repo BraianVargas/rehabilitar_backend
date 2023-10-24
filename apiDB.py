@@ -5,6 +5,8 @@ import os
 import mysql.connector
 from config.config import *
 
+
+
 ###################################################################################
 #              GENERA UN TOKEN UNICO PARA EL USUARIO QUE HACE LOGIN
 ###################################################################################
