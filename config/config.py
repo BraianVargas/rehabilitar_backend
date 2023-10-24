@@ -21,5 +21,5 @@ ROOT_PATH = "localhost:5000"
 server_host="vctest.dyndns.org"
 server_user="rehabilitardb"
 server_passwd='Rehabilitar23!'
-server_db='rehabilitar'
+server_db='rehabilitar_test'
 server_port=13306
