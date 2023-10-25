@@ -40,9 +40,9 @@ def getPaciente(paciente_id):
     paciente = apiDB.consultaSelect(f"select * from pacientes where id = '{paciente_id}'")
     return paciente
 
-def cargaTurno(turno,filetoken):
+def cargaTurno(turno,filetoken, enlace_ddjj):
     apiDB.consultaGuardar(
-        f"""insert into turnos (paciente_id,empresa_id,fecha,tipo_examen,created_at,file_token,observaciones)
+        f"""insert into turnos (paciente_id,empresa_id,fecha,tipo_examen,created_at,file_token,observaciones,link_ddjj)
             values (
                 {turno['paciente_id']},
                 {turno['empresa_id']},
@@ -50,7 +50,8 @@ def cargaTurno(turno,filetoken):
                 '{turno['tipo_examen']}',
                 '{datetime.datetime.now()}',
                 '{filetoken}',
-                '{turno['observaciones']}'
+                '{turno['observaciones']}',
+                '{enlace_ddjj}'
             );
         """
         )
@@ -78,7 +79,8 @@ def consulta_turno(today):
                 "documento": paciente[0]['documento'],
                 "fecha_turno": turno['fecha'],
                 "tipo_turno": turno['tipo_examen'],
-                "file_token":turno['file_token']
+                "file_token":turno['file_token'],
+                "enlace_ddjj":turno['link_ddjj']
             }
             turnos.append(turno_info)
         return turnos

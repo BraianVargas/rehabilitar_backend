@@ -41,8 +41,8 @@ def nuevoTurno():
                          "tipo_examen":tipo_examen, 
                          "observaciones":observaciones, 
                     }
-                    filetoken = genera_comprobante_turno(nombre, dni, fecha, tipo_examen, empresa_id)
-                    cargaTurno(turno, filetoken)
+                    filetoken, enlace_ddjj = genera_comprobante_turno(nombre, dni, fecha, tipo_examen, empresa_id)
+                    cargaTurno(turno, filetoken, enlace_ddjj)
                     return jsonify({"success": "Turno cargado correctamente",}), 200
                else:
                     return jsonify({'no':"No quedan turnos disponibles"}),405
