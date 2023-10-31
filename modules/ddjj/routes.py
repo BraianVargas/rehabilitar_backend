@@ -53,3 +53,23 @@ def consulta_ddjj():
             pass
     except Exception as e:
         return jsonify({"Error": str(e)}, 500)
+    
+
+    
+
+@ddjjBP.route('/update/<int:_ddjj_id>', methods=['POST'])
+def ddjj_paciente_update(_ddjj_id):
+    try:
+        _token = request.get_json()['token']
+        _data = request.get_json()['data']
+        if(len(_token) != 100):
+            return jsonify({'Error':"No se envió token de usuario o no es correcto"}),404
+        if not (apiOperacionesComunes.verificaToken(_token)):
+            return apiOperacionesComunes.respJson('no',"El token no es correcto o a expirado",{})
+        
+        if request.method == 'POST':
+            update_ddjj(_ddjj_id,_data)
+            
+
+    except Exception as e:
+        return jsonify({"Error": str(e)}, 500)

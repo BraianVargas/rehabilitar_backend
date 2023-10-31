@@ -27,3 +27,31 @@ def save_ddjj(data,paciente_id,empresa_id):
 
     except Exception as e:
         return jsonify({'Error': str(e)}), 500
+    
+def update_ddjj(ddjj_id=None,data=None):
+    if ddjj_id!=None:
+        keys = list(data.keys())
+        values = list(data.values())
+
+        formatted_values = []
+        for value in values:
+            if isinstance(value, bool):
+                formatted_values.append(str(value).lower())
+            else:
+                formatted_values.append(f'"{value}"')
+
+        # ---------- Arma la query ----------
+        query = f'update ddjj SET '
+        for index, (key,value) in enumerate(data.items()):
+            if index == len(data) - 1:
+                query += f"{key}='{value}'"
+            else:
+                query += f"{key}='{value}', "
+        query += f"where 'id'='{ddjj_id}';"
+        print(query)
+        
+
+        apiDB.consultaUpdate(query)
+
+        return jsonify({'Mensaje': 'Datos procesados exitosamente'}), 200
+    

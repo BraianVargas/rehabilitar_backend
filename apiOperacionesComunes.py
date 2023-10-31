@@ -8,7 +8,7 @@ def respJson(exito,mensaje,datos):
 
 
 def verifica_actividad(user, token):
-    last_activity = apiDB.consultaSelect(f"SELECT last_activity FROM users WHERE token = '{user[0]['token']}'")[0]['last_activity']
+    last_activity = user[0]['last_activity']
     current_time = datetime.datetime.now()
     if last_activity!=None:
         time_difference = (current_time - last_activity).total_seconds()
@@ -24,7 +24,6 @@ def verifica_actividad(user, token):
 def verificaToken(token):
     if token:
         usuario = apiDB.consultaSelect(f"SELECT * FROM users WHERE binary token = '{token}'")
-
         if usuario:
             return verifica_actividad(usuario, token)
 

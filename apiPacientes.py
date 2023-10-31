@@ -101,3 +101,33 @@ def new():
     else:
         return jsonify({'Prohibido':f"El usuario con documento {documento} ya fue cargado "}),401
 
+
+@apiPacientes.route('/update/<int:_id_paciente>', methods=['POST'])
+def edit_paciente(_id_paciente):
+    # Obtengio los datos del paciente
+    token = request.json.get('token')
+    data = request.json.get('data')
+    try:
+        if (len(token) != 100):
+            return jsonify({'no':"No se envió token de usuario o no es correcto"}),404
+        if not (apiOperacionesComunes.verificaToken(token)):
+            return apiOperacionesComunes.respJson('no',"El token no es correcto o a expirado",{})
+    except:
+        return apiOperacionesComunes.respJson('no',"El token no es correcto o a expirado",{})
+
+    if data:
+        apiDB.consultaUpdate(
+            f"""update pacientes set 
+                    apellidos = '{data['apellidos']}',
+                    nombres = '{data['nombres']}',
+                    documento = '{data['documento']}',
+                    celular = '{data['celular']}',
+                    telefono = '{data['telefono']}',
+                    domicilio = '{data['domicilio']}',
+                    fecha_nacimiento = '{data['fecha_nacimiento']}'
+                where id='{_id_paciente}'"""
+        )
+
+        return apiOperacionesComunes.respJson('yes',"El paciente fue actualizado correctamente",{})
+    else:
+        return apiOperacionesComunes.respJson('no',"No se recibió info de paciente",{})

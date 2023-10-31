@@ -126,4 +126,3 @@ def consultaEliminar(query,args=None):
     cursor.execute(query,args)
     db.commit()
     db.close()
-        

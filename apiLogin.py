@@ -56,10 +56,8 @@ def login():
     #cursor.execute(query,(usrname,password))
     try:
         result=apiDB.consultaSelect(query,(usrname,password)) #cursor.fetchall()
-        print(result)
         if (len(result)) > 0:
             current_token=apiDB.consultaSelect(f"select token from users where id = '{result[0]['id']}'")
-            
             if(current_token[0]['token'])=='': #Es primer ingreso
                 nuevotoken=apiDB.tokengen()
                 query=f"update users set token='{nuevotoken}',last_login=NOW(),last_activity=NOW() where id='{result[0]['id']}'"
