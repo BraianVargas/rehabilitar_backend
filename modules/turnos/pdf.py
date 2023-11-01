@@ -18,13 +18,14 @@ def fileNameGen():
     return password
 
 def genera_comprobante_turno(nombre, dni, fecha_turno, tipo, empresa_id):
-    # Nombre del archivo de salida PDF
-    fecha_turno = fecha_turno.replace("/", "-") 
+    day,month,year = (fecha_turno.replace("/", "-")).split('-')
+    day = day.zfill(2)
+    month = month.zfill(2)
+    fecha_turno = f"{day}-{month}-{year}"
     tipo = tipo.lower()
     
     
-    # Ruta completa al directorio donde deseas guardar el PDF
-    destino = f"./turnos/{tipo}/{fecha_turno}/"  # Reemplaza esto con la ruta deseada
+    destino = f"./turnos/{tipo}/{fecha_turno}/" 
 
     if not os.path.exists(destino):
         os.makedirs(destino)

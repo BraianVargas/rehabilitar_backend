@@ -74,13 +74,15 @@ def get_turnos_dia():
 @turnosBP.route('/<string:_token>',methods=['GET'])
 def get_informe(_token):
      dataTurno = apiDB.consultaSelect("Select * from turnos where binary file_token = %s",[(str(_token))])
-     fecha = str(dataTurno[0]['fecha']).split(' ')
-     day = (fecha[0].split('-'))[2]
-     month = (fecha[0].split('-'))[1]
-     year = (fecha[0].split('-'))[0]
+     fecha = str(dataTurno[0]['fecha'].date())
+     day = (fecha.split('-'))[2]
+     month = (fecha.split('-'))[1]
+     year = (fecha.split('-'))[0]
      paciente = getPaciente(int(dataTurno[0]['paciente_id']))
-
-     turno = f"./turnos/{dataTurno[0]['tipo_examen'].lower()}/{day}-{month}-{year}/{_token}.pdf"
+     current_directory = os.getcwd()
+     
+     file_directory = os.path.join(current_directory, 'turnos', dataTurno[0]['tipo_examen'].lower(), f"{day}-{month}-{year}")
+     turno = os.path.join(file_directory, f"{_token}.pdf")
 
      return send_file(turno, as_attachment=True,download_name=f"{paciente[0]['documento']}_{dataTurno[0]['tipo_examen']}_{fecha[0]}.pdf")
 

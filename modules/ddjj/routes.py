@@ -70,6 +70,7 @@ def ddjj_paciente_update(_ddjj_id):
         if request.method == 'POST':
             update_ddjj(_ddjj_id,_data)
             
+        return jsonify(1)
 
     except Exception as e:
         return jsonify({"Error": str(e)}, 500)

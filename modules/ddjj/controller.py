@@ -33,23 +33,16 @@ def update_ddjj(ddjj_id=None,data=None):
         keys = list(data.keys())
         values = list(data.values())
 
-        formatted_values = []
-        for value in values:
-            if isinstance(value, bool):
-                formatted_values.append(str(value).lower())
-            else:
-                formatted_values.append(f'"{value}"')
-
         # ---------- Arma la query ----------
-        query = f'update ddjj SET '
-        for index, (key,value) in enumerate(data.items()):
-            if index == len(data) - 1:
-                query += f"{key}='{value}'"
+        query = f'UPDATE ddjj SET '
+        for index, (key, value) in enumerate(data.items()):
+            if isinstance(value, bool):
+                query += f"{key}={value}" if index == len(data) - 1 else f"{key}={value}, "
             else:
-                query += f"{key}='{value}', "
-        query += f"where 'id'='{ddjj_id}';"
-        print(query)
+                query += f"{key}='{value}'" if index == len(data) - 1 else f"{key}='{value}', "
+        query += f"WHERE id={ddjj_id};"
         
+        print(query)
 
         apiDB.consultaUpdate(query)
 
