@@ -96,50 +96,38 @@ def new():
     except:
         return jsonify({"error":"ocurrio un error durante la consulta."}), 500
     
-    
 @apiEmpresas.route('/update/<int:_id_empresa>', methods=['POST'])
 def edit_empresa(_id_empresa):
-    # Obtengio los datos del empresa
+    # Obtain the user token and data from the request
     token = request.json.get('token')
     data = request.json.get('data')
+    
     try:
-        if (len(token) != 100):
-            return jsonify({'no':"No se envió token de usuario o no es correcto"}),404
-        if not (apiOperacionesComunes.verificaToken(token)):
-            return apiOperacionesComunes.respJson('no',"El token no es correcto o a expirado",{})
-    except:
-        return apiOperacionesComunes.respJson('no',"El token no es correcto o a expirado",{})
+        # Check token validity and length
+        if not token or len(token) != 100 or not apiOperacionesComunes.verificaToken(token):
+            return jsonify({'error': 'El token no es correcto o ha expirado'}), 404
+    except Exception as e:
+        return jsonify({'error': 'El token no es correcto o ha expirado'}), 404
 
     if data:
-        # apiDB.consultaUpdate(
-        #     f"""update empresas set 
-        #             razonsocial = '{data["razonsocial"]}',
-        #             cuit = '{data["cuit"]}',
-        #             telefono = '{data["telefono"]}',
-        #             direccion = '{data["domicilio"]}',
-        #             mail = '{data["mail"]}',
-        #             contacto = '{data["contacto"]}'
-        #         where id='{_id_empresa}'"""
-        # )
-        print(f"""
-                insert into empresas (razonsocial,cuit,telefono,domicilio,mail,contacto) 
-                VALUES (
-                    '{data['razonsocial']}',
-                    '{data['cuit']}',
-                    '{data['telefono']}',
-                    '{data['domicilio']}',
-                    '{data['mail']}',
-                    '{data['contacto']}'
-                )
-                ON DUPLICATE KEY UPDATE
-                razonsocial = VALUES(razonsocial),
-                cuit = VALUES(cuit),
-                telefono = VALUES(telefono),
-                domicilio = VALUES(domicilio),
-                mail = VALUES(mail),
-                contacto = VALUES(contacto);
-                """)
+        new_razonsocial = data.get('razonsocial')
+        if new_razonsocial:
+            existing_razonsocial = apiDB.consultaSelect(f"SELECT razonsocial FROM empresas WHERE razonsocial = %s", (new_razonsocial,))
+            if existing_razonsocial:
+                return jsonify({'error': 'La razón social ingresada ya existe.'}), 401
+            query = """UPDATE empresas
+                    SET razonsocial = %s,
+                        cuit = %s,
+                        telefono = %s,
+                        domicilio = %s,
+                        mail = %s,
+                        contacto = %s
+                    WHERE id = %s"""
+            params = (data['razonsocial'], data['cuit'], data['telefono'], data['domicilio'], data['mail'], data['contacto'], _id_empresa)
+            apiDB.consultaUpdate(query, params)
 
-        return apiOperacionesComunes.respJson('yes',"La empresa fue actualizada correctamente",{})
+            return jsonify({'message': 'La empresa fue actualizada correctamente'}), 200
+        else:
+            return jsonify({'error': 'No se recibió información de la empresa'}), 400
     else:
-        return apiOperacionesComunes.respJson('no',"No se recibió info de empresa",{})
+        return jsonify({'error': 'No se recibió información de la empresa'}), 400
