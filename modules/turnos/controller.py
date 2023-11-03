@@ -34,8 +34,6 @@ def verifica_disponibles(fecha):
     else:
         return True
 
-
-
 def getPaciente(paciente_id):
     paciente = apiDB.consultaSelect(f"select * from pacientes where id = '{paciente_id}'")
     return paciente
@@ -74,13 +72,17 @@ def consulta_turno(today):
                 "turno_id": turno['id'],
                 "empresa": empresa_name,
                 "confirmado": turno['confirmado'],
+                "asistio": turno['asistio'],
+                "atendido": turno['atendido'],
                 "paciente_nombre": paciente[0]['nombres'],
                 "paciente_apellido": paciente[0]['apellidos'],
                 "documento": paciente[0]['documento'],
+                "telefono": paciente[0]['telefono'],
                 "fecha_turno": turno['fecha'],
                 "tipo_turno": turno['tipo_examen'],
                 "file_token":turno['file_token'],
-                "enlace_ddjj":turno['link_ddjj']
+                "enlace_ddjj":turno['link_ddjj'],
+                "urgente":turno['urgente']
             }
             turnos.append(turno_info)
         return turnos
@@ -112,3 +114,17 @@ def confirma_turno(turno_id, confirma):
             return False
     else:
         return False
+    
+def filtra_turnos(turnos):
+    urgentes = [turno for turno in turnos if turno['urgente'] == 1]
+    no_urgentes = [turno for turno in turnos if turno['urgente'] != 1]
+
+    total_atendidos = sum(turno['atendido'] for turno in turnos)
+    total_presentes = sum(turno['asistio'] for turno in turnos)
+
+    return {
+        "atendidos": total_atendidos,
+        "presentes": total_presentes,
+        "turnos": no_urgentes,
+        "urgentes": urgentes
+    }

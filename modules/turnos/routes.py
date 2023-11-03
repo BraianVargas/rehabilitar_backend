@@ -6,14 +6,21 @@ from .controller import *
 import apiOperacionesComunes,apiDB
 from .pdf import *
 
-@turnosBP.route('/nuevo', methods=['POST'])
-def nuevoTurno():
-     token = request.json.get("token")
-     try:
-          if (len(token) != 100):
+@turnosBP.before_request
+def middle_verif_token():
+     if request.method == "POST":
+          token = request.json.get('token')
+          if(len(token) != 100):
                return jsonify({'no':"No se envió token de usuario o no es correcto"}),404
           if not (apiOperacionesComunes.verificaToken(token)):
                return apiOperacionesComunes.respJson('no',"El token no es correcto o a expirado",{})
+     else:
+          pass
+
+
+@turnosBP.route('/nuevo', methods=['POST'])
+def nuevoTurno():
+     try:
           if request.method == 'POST':
                paciente_id = request.json.get("turno")['paciente_id']
                empresa_id = request.json.get("turno")['empresa_id']
@@ -56,12 +63,7 @@ def nuevoTurno():
 @turnosBP.route('/today', methods=['GET','POST'])
 def get_turnos_dia():
      turnos = []
-     token = request.json.get("token")
      try:
-          if (len(token) != 100):
-               return jsonify({'no':"No se envió token de usuario o no es correcto"}),404
-          if not (apiOperacionesComunes.verificaToken(token)):
-               return apiOperacionesComunes.respJson('no',"El token no es correcto o a expirado",{})
           if request.method == "POST":
                today_date = datetime.date.today()
                date = (str(today_date) + ' 00:00:00')
@@ -93,12 +95,7 @@ def get_informe(_token):
 
 @turnosBP.route('/delete', methods=['GET','POST'])
 def del_turno():
-     token = request.json.get('token')
      try:
-          if(len(token) != 100):
-               return jsonify({'no':"No se envió token de usuario o no es correcto"}),404
-          if not (apiOperacionesComunes.verificaToken(token)):
-               return apiOperacionesComunes.respJson('no',"El token no es correcto o a expirado",{})
           status = (bool(delete_turno(request.json.get('turno_id'))))
           if status == True:
                return jsonify({'ok':"Turno eliminado correctamente"}),200
@@ -110,12 +107,7 @@ def del_turno():
 
 @turnosBP.route('/confirma', methods=["POST"])
 def conf_turno():
-     token = request.json.get('token')
      try:
-          if(len(token) != 100):
-               return jsonify({'no':"No se envió token de usuario o no es correcto"}),404
-          if not (apiOperacionesComunes.verificaToken(token)):
-               return apiOperacionesComunes.respJson('no',"El token no es correcto o a expirado",{})
           turno_id = request.json.get('turno_id')
           confirma = request.json.get('confirma')
 
@@ -126,3 +118,13 @@ def conf_turno():
                return jsonify({'no': "El turno seleccionado no se actualizo correctamente"}),500
      except:
           return jsonify({"no": "Ha ocurrido un error durante la ejecucion, reintente"}), 500
+
+@turnosBP.route('/gestion',methods=["GET","POST"])
+def gestion_turnos(): 
+     if request.method == "POST":
+          data=request.get_json()
+          fecha = datetime.datetime(int(data['year']),int(data['month']),int(data['day'])).date()
+          response = filtra_turnos(consulta_turno(fecha))
+          
+          return jsonify(response)
+
