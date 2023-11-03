@@ -82,7 +82,8 @@ def consulta_turno(today):
                 "tipo_turno": turno['tipo_examen'],
                 "file_token":turno['file_token'],
                 "enlace_ddjj":turno['link_ddjj'],
-                "urgente":turno['urgente']
+                "urgente":turno['urgente'],
+                "observaciones":turno['observaciones']
             }
             turnos.append(turno_info)
         return turnos
