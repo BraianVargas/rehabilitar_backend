@@ -83,6 +83,8 @@ def consulta_turno(today):
                 "file_token":turno['file_token'],
                 "enlace_ddjj":turno['link_ddjj'],
                 "urgente":turno['urgente'],
+                "orden_urgente":turno['orden_urgente'],
+                "orden_turno":turno['orden_turno'],
                 "observaciones":turno['observaciones']
             }
             turnos.append(turno_info)
@@ -105,23 +107,66 @@ def delete_turno(turno_id):
     except:
         return jsonify({"ERROR": "Ha ocurrido un error durante la ejecucion, reintente"}), 500
         
+def get_ultimo_urgente(fecha_turno):
+    try:
+        urgente = apiDB.consultaSelect(f"SELECT orden_urgente FROM turnos WHERE fecha={fecha_turno} andorden_urgente = (SELECT MAX(orden_urgente) FROM turnos)")
+        return urgente
+    except:
+        return 0
+
+def get_ultimo_turno(fecha_turno):
+    try:
+        no_urgente = apiDB.consultaSelect(f"SELECT orden_turno FROM turnos WHERE fecha={fecha_turno} andorden_turno = (SELECT MAX(orden_turno) FROM turnos)")
+        return no_urgente
+    except:
+        return 0
+
 def confirma_turno(turno_id, confirma):
     dataTurno = apiDB.consultaSelect(f"Select * from turnos where id = {turno_id}")
     if dataTurno != None:
         try:
             apiDB.consultaUpdate(f"update turnos set confirmado={confirma} where id={turno_id};")
+            orden=(int(get_ultimo_turno(dataTurno['fecha'])[0])+1)
+            apiDB.consultaUpdate(f"update turnos set orden_turno={orden} where id={turno_id};")
             return True
         except:
             return False
     else:
         return False
     
-def filtra_turnos(turnos):
-    urgentes = [turno for turno in turnos if turno['urgente'] == 1]
-    no_urgentes = [turno for turno in turnos if turno['urgente'] != 1]
+def set_urgente(turno_id,urgente):
+    dataTurno = apiDB.consultaSelect(f"Select * from turnos where id = {turno_id}")
+    if dataTurno != None:
+        try:
+            apiDB.consultaUpdate(f"update turnos set urgente={int(urgente)} where id={turno_id};")
+            orden=(int(get_ultimo_urgente(dataTurno['fecha'])[0])+1)
+            apiDB.consultaUpdate(f"update turnos set orden_turno={orden} where id={turno_id};")
+            return True
+        except:
+            return False
+    else:
+        return False
 
-    total_atendidos = sum(turno['atendido'] for turno in turnos)
-    total_presentes = sum(turno['asistio'] for turno in turnos)
+def ordena_lista_turnos(turnos,tipo_orden="orden_turno"):
+    ban = True
+    while ban:
+        ban=False
+        for i in range(len(turnos)-1):
+            if int(turnos[i][f'{tipo_orden}']) > int(turnos[i+1][f'{tipo_orden}']):
+                turnos[i], turnos[i+1] = turnos[i+1], turnos[i]
+                ban=True
+    return turnos
+
+def filtra_turnos(turnos):
+    new_turnos = [turno for turno in turnos if turno['confirmado'] == 1]
+
+    urgentes = [turno for turno in new_turnos if turno['urgente'] == 1]
+    urgentes = ordena_lista_turnos(urgentes,"orden_urgente")
+    no_urgentes = [turno for turno in new_turnos if turno['urgente'] == 0]
+    no_urgentes = ordena_lista_turnos(no_urgentes)
+
+    total_atendidos = sum(turno['atendido'] for turno in new_turnos)
+    total_presentes = sum(turno['asistio'] for turno in new_turnos)
 
     return {
         "atendidos": total_atendidos,
@@ -129,3 +174,4 @@ def filtra_turnos(turnos):
         "turnos": no_urgentes,
         "urgentes": urgentes
     }
+

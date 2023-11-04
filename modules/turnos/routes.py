@@ -110,8 +110,20 @@ def conf_turno():
      try:
           turno_id = request.json.get('turno_id')
           confirma = request.json.get('confirma')
-
           status = confirma_turno(turno_id,confirma)
+          if status == True:
+               return jsonify({'ok':"Turno confirmado correctamente"}),200
+          else:
+               return jsonify({'no': "El turno seleccionado no se actualizo correctamente"}),500
+     except:
+          return jsonify({"no": "Ha ocurrido un error durante la ejecucion, reintente"}), 500
+
+@turnosBP.route('/urgente', methods=["POST"])
+def set_urgentes():
+     try:
+          turno_id = request.json.get('turno_id')
+          urgente = request.json.get('urgente')
+          status = set_urgente(turno_id,urgente)
           if status == True:
                return jsonify({'ok':"Turno confirmado correctamente"}),200
           else:
