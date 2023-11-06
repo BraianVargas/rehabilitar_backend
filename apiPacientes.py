@@ -70,13 +70,13 @@ def new():
     #obtendo los datos que vienen en json
     token = request.json.get("token")
     data = request.json.get("data")
-    apellidos=data["apellidos"]
-    nombres=data["nombres"]
-    documento=data["documento"]
-    celular=data["celular"]
-    telefono=data["telefono"]
-    domicilio=data["domicilio"]
-    fecha_nacimiento   =data["fecha_nacimiento"]
+    apellidos = data["apellidos"]
+    nombres = data["nombres"]
+    documento = data["documento"] 
+    celular = data["celular"] if data['celular'] != '' else None
+    telefono = data["telefono"] if data['telefono'] != '' else None
+    domicilio = data["domicilio"] if data['domicilio'] != '' else None
+    fecha_nacimiento = data["fecha_nacimiento"] if data['fecha_nacimiento'] != '' else None
     #verifico token
     try:
         if len(token)!=100:
