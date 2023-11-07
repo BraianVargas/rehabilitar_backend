@@ -68,7 +68,7 @@ def get_turnos_dia():
                today_date = datetime.date.today()
                date = (str(today_date) + ' 00:00:00')
                turnos = consulta_turno(date)
-          return turnos
+          return jsonify(turnos),200
      except Exception as e:
           return jsonify({"no": f"{e}",}), 500
 

@@ -13,7 +13,6 @@ def ddjj_paciente():
         _empresa_id = request.args.get('empresa_id')
         if request.method == 'POST':
             paciente_id = apiDB.consultaSelect("Select id from pacientes where documento = %s", [(str(_dni))])
-            
             data = request.json.get('data')
             
             if paciente_id != []:
