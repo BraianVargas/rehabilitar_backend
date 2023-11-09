@@ -1,7 +1,7 @@
 import apiDB
 import mysql.connector
-from flask import Blueprint,  jsonify, request
-from flask_cors import CORS
+from flask import Blueprint,  jsonify, request, make_response
+from flask_cors import CORS, cross_origin
 import datetime
 import apiOperacionesComunes
 
@@ -65,7 +65,7 @@ def login():
                 texto={"success":"yes","usuario":result[0],"token":nuevotoken}
                 response=jsonify(texto)
                 response.headers.add('Access-Control-Allow-Origin', '*')
-                return response,201
+                return response,200
             else:
                 if bool(apiOperacionesComunes.verificaToken(current_token[0]['token'])):
                     texto={"success":"yes","usuario":result[0],"token":current_token[0]['token']}

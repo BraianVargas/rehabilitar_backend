@@ -1,6 +1,4 @@
-import datetime
-import holidays
-import apiDB
+import datetime, holidays, apiDB, string, secrets
 import apiOperacionesComunes
 from flask import jsonify
 
@@ -74,6 +72,7 @@ def consulta_turno(today):
                 "confirmado": turno['confirmado'],
                 "asistio": turno['asistio'],
                 "atendido": turno['atendido'],
+                "paciente_id": paciente[0]['id'],
                 "paciente_nombre": paciente[0]['nombres'],
                 "paciente_apellido": paciente[0]['apellidos'],
                 "documento": paciente[0]['documento'],
@@ -109,15 +108,21 @@ def delete_turno(turno_id):
         
 def get_ultimo_urgente(fecha_turno):
     try:
-        urgente = apiDB.consultaSelect(f"SELECT orden_urgente FROM turnos WHERE fecha={fecha_turno} andorden_urgente = (SELECT MAX(orden_urgente) FROM turnos)")
-        return urgente
+        urgente = apiDB.consultaSelect(f"SELECT MAX(orden_urgente) FROM turnos WHERE fecha='{fecha_turno}'")
+        if len(urgente)>0:
+            return urgente[0]['MAX(orden_urgente)']
+        else:
+            return 0
     except:
         return 0
 
 def get_ultimo_turno(fecha_turno):
     try:
-        no_urgente = apiDB.consultaSelect(f"SELECT orden_turno FROM turnos WHERE fecha={fecha_turno} andorden_turno = (SELECT MAX(orden_turno) FROM turnos)")
-        return no_urgente
+        no_urgente = apiDB.consultaSelect(f"SELECT MAX(orden_turno) FROM turnos WHERE fecha='{fecha_turno}'")
+        if len(no_urgente)>0:
+            return no_urgente[0]['MAX(orden_turno)']
+        else:
+            return 0
     except:
         return 0
 
@@ -125,9 +130,30 @@ def confirma_turno(turno_id, confirma):
     dataTurno = apiDB.consultaSelect(f"Select * from turnos where id = {turno_id}")
     if dataTurno != None:
         try:
-            apiDB.consultaUpdate(f"update turnos set confirmado={confirma} where id={turno_id};")
-            orden=(int(get_ultimo_turno(dataTurno['fecha'])[0])+1)
-            apiDB.consultaUpdate(f"update turnos set orden_turno={orden} where id={turno_id};")
+            orden=int(get_ultimo_turno(dataTurno[0]['fecha']))+1
+            apiDB.consultaUpdate(f"update turnos set orden_turno={orden}, confirmado={confirma} where id={turno_id};")
+            return True
+        except:
+            return False
+    else:
+        return False
+    
+def set_asistido(turno_id, presente):
+    dataTurno = apiDB.consultaSelect(f"Select * from turnos where id = {turno_id}")
+    if dataTurno != None:
+        try:
+            apiDB.consultaUpdate(f"update turnos set asistio={presente} where id={turno_id};")
+            return True
+        except:
+            return False
+    else:
+        return False
+    
+def set_atendido(turno_id, atendido):
+    dataTurno = apiDB.consultaSelect(f"Select * from turnos where id = {turno_id}")
+    if dataTurno != None:
+        try:
+            apiDB.consultaUpdate(f"update turnos set atendido={atendido} where id={turno_id};")
             return True
         except:
             return False
@@ -138,9 +164,8 @@ def set_urgente(turno_id,urgente):
     dataTurno = apiDB.consultaSelect(f"Select * from turnos where id = {turno_id}")
     if dataTurno != None:
         try:
-            apiDB.consultaUpdate(f"update turnos set urgente={int(urgente)} where id={turno_id};")
-            orden=(int(get_ultimo_urgente(dataTurno['fecha'])[0])+1)
-            apiDB.consultaUpdate(f"update turnos set orden_turno={orden} where id={turno_id};")
+            orden=int(get_ultimo_urgente(dataTurno[0]['fecha']))+1
+            apiDB.consultaUpdate(f"update turnos set urgente={urgente}, orden_urgente={orden} where id={turno_id};")
             return True
         except:
             return False
@@ -175,3 +200,7 @@ def filtra_turnos(turnos):
         "urgentes": urgentes
     }
 
+def fileNameGen():
+    alphabet = string.ascii_letters + string.digits
+    password = ''.join(secrets.choice(alphabet) for i in range(20))
+    return password

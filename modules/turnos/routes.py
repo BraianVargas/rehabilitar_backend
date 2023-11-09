@@ -1,10 +1,16 @@
 from modules.turnos import turnosBP
 from flask import Flask, jsonify, request, send_file
-import datetime
+import datetime,json
 from .controller import *
 
 import apiOperacionesComunes,apiDB
 from .pdf import *
+
+ALLOWED_EXTENSIONS=['png','jpg','jpeg','jfif']
+
+UPLOAD_FOLDER = 'informes/'
+def allowed_file(filename):
+     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @turnosBP.before_request
 def middle_verif_token():
@@ -118,6 +124,32 @@ def conf_turno():
      except:
           return jsonify({"no": "Ha ocurrido un error durante la ejecucion, reintente"}), 500
 
+@turnosBP.route('/asistencia', methods=["POST"])
+def asiste_turno():
+     try:
+          turno_id = request.json.get('turno_id')
+          confirma = request.json.get('confirma')
+          status = set_asistido(turno_id,confirma)
+          if status == True:
+               return jsonify({'ok':"Turno actualizado correctamente"}),200
+          else:
+               return jsonify({'no': "El turno seleccionado no se actualizo correctamente"}),500
+     except:
+          return jsonify({"no": "Ha ocurrido un error durante la ejecucion, reintente"}), 500
+     
+@turnosBP.route('/atendido', methods=["POST"])
+def atiende_turno():
+     try:
+          turno_id = request.json.get('turno_id')
+          confirma = request.json.get('confirma')
+          status = set_atendido(turno_id,confirma)
+          if status == True:
+               return jsonify({'ok':"Turno actualizado correctamente"}),200
+          else:
+               return jsonify({'no': "El turno seleccionado no se actualizo correctamente"}),500
+     except:
+          return jsonify({"no": "Ha ocurrido un error durante la ejecucion, reintente"}), 500
+
 @turnosBP.route('/urgente', methods=["POST"])
 def set_urgentes():
      try:
@@ -139,4 +171,3 @@ def gestion_turnos():
           response = filtra_turnos(consulta_turno(fecha))
           
           return jsonify(response)
-
