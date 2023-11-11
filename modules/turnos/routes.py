@@ -171,3 +171,14 @@ def gestion_turnos():
           response = filtra_turnos(consulta_turno(fecha))
           
           return jsonify(response)
+
+@turnosBP.route('/ver/by_fecha', methods=['GET','POST'])
+def get_turnos_by_fecha():
+     try:
+          if request.method == "POST":
+               data = request.get_json()
+               fecha = datetime.datetime(int(data['year']),int(data['month']),int(data['day'])).date()
+               turnos = consulta_turno(fecha)
+          return jsonify(turnos),200
+     except Exception as e:
+          return jsonify({"no": f"{e}",}), 500
