@@ -14,8 +14,8 @@
 ###################################################################################
 #                               DEVELOPMENT
 ###################################################################################
-# ROOT_PATH = "vctest.dyndns.org:5002"
-ROOT_PATH = "localhost:5000"
+ROOT_PATH = "vctest.dyndns.org:5002"
+# ROOT_PATH = "localhost:5000"
 
 
 # Base de datos
