@@ -181,6 +181,7 @@ def get_turnos_by_fecha():
                data = request.get_json()
                fecha = datetime.datetime(int(data['year']),int(data['month']),int(data['day'])).date()
                turnos = consulta_turno(fecha)
+               print(turnos)
           return jsonify(turnos),200
      except Exception as e:
           return jsonify({"no": f"{e}",}), 500
