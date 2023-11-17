@@ -1,8 +1,7 @@
 ###################################################################################
 #                               Deploy
 ###################################################################################
-# ROOT_PATH = "vctest.dyndns.org:5000"
-# ROOT_PATH = "localhost:5000"
+# ROOT_PATH = "http://app.rehabilitarsanjuan.com/"
 
 # # Base de datos
 # server_host="127.0.0.1"
@@ -15,10 +14,8 @@
 #                               DEVELOPMENT
 ###################################################################################
 ROOT_PATH = "vctest.dyndns.org:5002"
-# ROOT_PATH = "localhost:5000"
 
-
-# Base de datos
+# # Base de datos
 server_host="vctest.dyndns.org"
 server_user="rehabilitardb"
 server_passwd='Rehabilitar23!'
@@ -29,11 +26,11 @@ server_port=13306
 ###################################################################################
 #                               TEST
 ###################################################################################
-# ROOT_PATH = "https://thedevarg.pythonanywhere.com/"
+# ROOT_PATH = "http://test.rehabilitarsanjuan.com/"
 
 # # Base de datos
-# server_host="TheDevArg.mysql.pythonanywhere-services.com"
-# server_user="TheDevArg"
-# server_passwd='%VwaR*M%k5rHAVa'
-# server_db='TheDevArg$rehabilitar_test'
-# server_port=3306
+# server_host="127.0.0.1"
+# server_user="rehabilitardb"
+# server_passwd='Rehabilitar23!'
+# server_db='rehabilitar_testing'
+# server_port=13306

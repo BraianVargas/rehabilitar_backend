@@ -15,6 +15,7 @@ from apiPacientes import apiPacientes
 from modules.turnos import *
 from modules.ddjj import *
 from modules.imagenes import *
+from modules.tipo_ficha import *
 
 app = Flask(__name__)
 
@@ -26,6 +27,7 @@ app.register_blueprint(apiPacientes, url_prefix='/pacientes')
 app.register_blueprint(turnosBP, url_prefix='/turnos')
 app.register_blueprint(ddjjBP, url_prefix='/ddjj')
 app.register_blueprint(upload_fotosBP, url_prefix='/subirFoto')
+app.register_blueprint(tipoFichaBP, url_prefix='/tipoFicha')
 # app.register_blueprint(apiTiposTramites, url_prefix='/tipostramites')
 
 

@@ -31,6 +31,7 @@ def nuevoTurno():
                paciente_id = request.json.get("turno")['paciente_id']
                empresa_id = request.json.get("turno")['empresa_id']
                tipo_examen = request.json.get("turno")['tipo_examen']
+               tipo_ficha = request.json.get("turno")['tipo_ficha']
                observaciones = request.json.get("turno")['observaciones']
                dd = request.json.get("turno")['day']
                mm = request.json.get('turno')["month"]
@@ -51,6 +52,7 @@ def nuevoTurno():
                               "empresa_id":empresa_id,
                               "fecha":fecha_dt,
                               "tipo_examen":tipo_examen,
+                              "tipo_ficha":tipo_ficha,
                               "observaciones":observaciones,
                          }
                          filetoken, enlace_ddjj = genera_comprobante_turno(nombre, dni, fecha, tipo_examen, empresa_id)
@@ -182,3 +184,14 @@ def get_turnos_by_fecha():
           return jsonify(turnos),200
      except Exception as e:
           return jsonify({"no": f"{e}",}), 500
+     
+
+@turnosBP.route('/change_tipo_ficha/<int:turno_id>',methods=['POST'])
+def update_tipo_ficha(turno_id):
+     try:
+          data=request.get_json()
+          query = f"update turnos set tipo_ficha_id={int(data['tipo_ficha_id'])} where id={int(turno_id)}"
+          apiDB.consultaUpdate(query)
+          return jsonify({"mensaje":"Tipo de ficha actualizada"}),200
+     except:
+          return jsonify({"error":"Error actualizando tipo de ficha, reintente"}),500

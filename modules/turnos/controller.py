@@ -61,6 +61,8 @@ def consulta_turno(today):
         for i in range(len(query)):
             turno = query[i]
             name = apiDB.consultaSelect(f"SELECT razonsocial FROM empresas WHERE id={turno['empresa_id']}")
+            ficha = apiDB.consultaSelect(f"SELECT nombre_ficha FROM tipo_ficha WHERE id={turno['tipo_ficha_id']}")
+            print(ficha[0]['nombre_ficha'])
             if len(name)!=0:
                 empresa_name = name[0]['razonsocial']
             else:
@@ -79,6 +81,7 @@ def consulta_turno(today):
                 "telefono": paciente[0]['telefono'],
                 "fecha_turno": turno['fecha'],
                 "tipo_turno": turno['tipo_examen'],
+                "tipo_ficha": ficha[0]['nombre_ficha'],
                 "file_token":turno['file_token'],
                 "enlace_ddjj":turno['link_ddjj'],
                 "urgente":turno['urgente'],
