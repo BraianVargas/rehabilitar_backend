@@ -1,0 +1,23 @@
+CREATE TABLE `turnos` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `paciente_id` int DEFAULT NULL,
+  `fecha` datetime DEFAULT NULL,
+  `tipo_examen` varchar(50) DEFAULT NULL,
+  `file_token` varchar(50) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `last_modification` datetime DEFAULT NULL,
+  `confirmado` tinyint(1) DEFAULT '0',
+  `deleted` tinyint DEFAULT NULL,
+  `empresa_id` int DEFAULT NULL,
+  `observaciones` varchar(200) DEFAULT NULL,
+  `link_ddjj` varchar(150) DEFAULT NULL,
+  `urgente` tinyint DEFAULT '0',
+  `atendido` tinyint DEFAULT '0',
+  `asistio` tinyint DEFAULT '0',
+  `orden_turno` int DEFAULT '0',
+  `orden_urgente` int DEFAULT '0',
+  `img_token` varchar(150) DEFAULT NULL,
+  `firma_token` varchar(150) DEFAULT NULL,
+  `tipo_ficha_id` int DEFAULT '-1',
+  PRIMARY KEY (`id`)
+) ;
