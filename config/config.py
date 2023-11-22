@@ -26,11 +26,11 @@ server_port=3306
 ###################################################################################
 #                               TEST
 ###################################################################################
-# ROOT_PATH = "http://test.rehabilitarsanjuan.com/"
+# ROOT_PATH = "http://test.rehabilitarsanjuan.com/api/"
 
 # # Base de datos
 # server_host="127.0.0.1"
 # server_user="rehabilitardb"
 # server_passwd='Rehabilitar23!'
 # server_db='rehabilitar_testing'
-# server_port=13306
+# server_port=3306

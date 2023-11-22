@@ -38,30 +38,28 @@ def nuevoTurno():
                yyyy = request.json.get("turno")['year']
                fecha=f"{dd}/{mm}/{yyyy}"
                fecha_dt = datetime.datetime.strptime(fecha, "%d/%m/%Y").date()
-
                if verifica_no_turno(paciente_id, empresa_id, fecha_dt): # True si tiene turnos
                     return jsonify({'no':f"El paciente ya posee turno para la fecha {fecha}"}),405
-
-               if (verifica_habil_feriado(fecha) == "habil"):
-                    if (verifica_disponibles(fecha_dt) == True):
-                         paciente = getPaciente(paciente_id)
-                         nombre = f"{paciente[0]['nombres']} {paciente[0]['apellidos']}"
-                         dni = paciente[0]['documento']
-                         turno = {
-                              "paciente_id":paciente_id,
-                              "empresa_id":empresa_id,
-                              "fecha":fecha_dt,
-                              "tipo_examen":tipo_examen,
-                              "tipo_ficha":tipo_ficha,
-                              "observaciones":observaciones,
-                         }
-                         filetoken, enlace_ddjj = genera_comprobante_turno(nombre, dni, fecha, tipo_examen, empresa_id)
-                         cargaTurno(turno, filetoken, enlace_ddjj)
-                         return jsonify({"ok": "Turno cargado correctamente",}), 200
-                    else:
-                         return jsonify({'no':"No quedan turnos disponibles"}),405
+               # if (verifica_habil_feriado(fecha) == "habil"):
+               if (verifica_disponibles(fecha_dt) == True):
+                    paciente = getPaciente(paciente_id)
+                    nombre = f"{paciente[0]['nombres']} {paciente[0]['apellidos']}"
+                    dni = paciente[0]['documento']
+                    turno = {
+                         "paciente_id":paciente_id,
+                         "empresa_id":empresa_id,
+                         "fecha":fecha_dt,
+                         "tipo_examen":tipo_examen,
+                         "tipo_ficha":tipo_ficha,
+                         "observaciones":observaciones,
+                    }
+                    filetoken, enlace_ddjj = genera_comprobante_turno(nombre, dni, fecha, tipo_examen, empresa_id)
+                    cargaTurno(turno, filetoken, enlace_ddjj)
+                    return jsonify({"ok": "Turno cargado correctamente",}), 200
                else:
-                    return jsonify({'no':"La fecha seleccionada no está habilitada para asignar turno"}),401
+                    return jsonify({'no':"No quedan turnos disponibles"}),405
+               # else:
+               #      return jsonify({'no':"La fecha seleccionada no está habilitada para asignar turno"}),401
 
      except:
           return jsonify({"no": "Ha ocurrido un error durante la consulta",}), 500
