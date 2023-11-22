@@ -3,7 +3,7 @@ import string
 import secrets
 import os
 import mysql.connector
-from config.config import *
+from config import *
 
 
 

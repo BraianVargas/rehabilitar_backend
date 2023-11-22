@@ -6,7 +6,7 @@ from reportlab.platypus.flowables import HRFlowable
 from reportlab.lib.units import inch
 import os
 import string, secrets
-from config.config import *
+from config import *
 
 
 ###################################################################################
