@@ -25,7 +25,6 @@ def store_file(file,destino,data):
     file_token = fileNameGen()
     extension=file.filename.split('.')[1]
     
-    #si existe genero hasta que no
     while (os.path.exists(destino + file_token + file.filename)):
         file_token = fileNameGen()
     file.save(os.path.join(destino, file_token +'.'+extension))
@@ -33,7 +32,7 @@ def store_file(file,destino,data):
 
     try:
         apiDB.consultaGuardar(f"insert into archivos (original_filename,id_usuario_creador, token_archivo) values ('{file.filename}','{id_usuario_creador['id']}','{file_token}')")
-        pass
+        return file_token
     except Exception as e:
         return jsonify(e),500
     
@@ -50,8 +49,13 @@ def get_uploaded_files(fecha,data):
     #verificar archivo no eliminado en ddbb
     for archivo in archivos:
         for file in response:
-            if archivo.split('.')[0] == file['token_archivo']:
-                uploaded.append(file['original_filename'])
+            print(file)
+            if (file['deleted_at'] == None) and (archivo.split('.')[0] == file['token_archivo']):
+                data = {
+                    "file_id":file['id'],
+                    "filename":file['original_filename']
+                }
+                uploaded.append(data)
     return uploaded
 
 
