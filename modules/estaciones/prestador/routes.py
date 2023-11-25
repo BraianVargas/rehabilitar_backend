@@ -30,7 +30,7 @@ def carga_estudio():
                 return jsonify({"error":"Tipo de archivo no permitido"}),401
             
             # carga informe estudio
-            id_informe = apiDB.consultaGuardar(f"insert into informe_estudio (id_turno, id_estudio, id_area) values ({data['id_turno']},{data['id_estudio']},{data['id_area']})")[0]['last_insert_id()']
+            id_informe = apiDB.consultaGuardar(f"insert into informe_estudio (id_turno, id_estudio, id_area) values ({data['id_turno']},{data['id_estudio']},{data['id_area']},{data['observaciones']})")[0]['last_insert_id()']
             # genera archivo y carga en la tabla de arcivos y trae el token generado
             fecha=str(datetime.datetime.now().year) + "/"+ str(datetime.datetime.now().month)+ "/"+ str(datetime.datetime.now().day )
             destino="files/prestador/"+fecha +'/'+str(data['id_area'])+'/'+str(data['id_estudio'])+'/'
