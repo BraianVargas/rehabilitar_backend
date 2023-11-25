@@ -17,6 +17,7 @@ from modules.ddjj import *
 from modules.imagenes import *
 from modules.tipo_ficha import *
 from modules.estaciones.prestador import *
+from modules.estaciones import *
 
 app = Flask(__name__)
 
@@ -29,6 +30,7 @@ app.register_blueprint(turnosBP, url_prefix='/turnos')
 app.register_blueprint(ddjjBP, url_prefix='/ddjj')
 app.register_blueprint(upload_fotosBP, url_prefix='/subirFoto')
 app.register_blueprint(tipoFichaBP, url_prefix='/tipoFicha')
+app.register_blueprint(estacionesBP, url_prefix='/estaciones')
 app.register_blueprint(prestadorBP, url_prefix='/estaciones/prestador')
 
 

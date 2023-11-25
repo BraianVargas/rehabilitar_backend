@@ -28,4 +28,10 @@ def fin_atencion():
 
 @estacionesBP.route('/get_areas_atendidas',methods=['POST'])
 def get_areas_atendidas():
-    pass
+    data = request.get_json()
+    try:
+        print(1)
+        areas = apiDB.consultaSelect(f"select * from fact_asistencia_estaciones where id_turno = {data['id_turno']}")
+        return jsonify(areas),200
+    except:
+        return jsonify({"error":"Ha ocurrido un error al finalizar la atencion, reintente"}),500
