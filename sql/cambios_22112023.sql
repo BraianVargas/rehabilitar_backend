@@ -4,6 +4,7 @@ create table informe_estudio(
 	id int primary key auto_increment,
     id_estudio int not null,
     id_area int not null,
+    id_turno int not null,
     id_fact_informe int not null,
     observaciones varchar(200) default null
 );
