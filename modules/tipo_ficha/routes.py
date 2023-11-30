@@ -29,9 +29,8 @@ def get_areas():
 @tipoFichaBP.route('/get_estudios/by_area/<int:id_area>', methods=['POST'])
 def get_estudios(id_area):
     try:
-        if verifica_ficha_id(id_area):
-            estudios_json = get_estudios_by_area_id_controller(id_area)
-            return jsonify(estudios_json),200
+        estudios_json = get_estudios_by_area_id_controller(id_area)
+        return jsonify(estudios_json),200
     except: 
         return jsonify({"error":"no se ha podido consultar los estudios asociados al area seleccionada, reintente"}),500
 

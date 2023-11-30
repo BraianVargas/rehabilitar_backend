@@ -25,7 +25,6 @@ def store_file(file,destino,data):
     file_token = fileNameGen()
     extension=file.filename.split('.')[1]
     
-    #si existe genero hasta que no
     while (os.path.exists(destino + file_token + file.filename)):
         file_token = fileNameGen()
     file.save(os.path.join(destino, file_token +'.'+extension))
@@ -33,7 +32,7 @@ def store_file(file,destino,data):
 
     try:
         apiDB.consultaGuardar(f"insert into archivos (original_filename,id_usuario_creador, token_archivo) values ('{file.filename}','{id_usuario_creador['id']}','{file_token}')")
-        pass
+        return file_token
     except Exception as e:
         return jsonify(e),500
     
@@ -50,9 +49,96 @@ def get_uploaded_files(fecha,data):
     #verificar archivo no eliminado en ddbb
     for archivo in archivos:
         for file in response:
-            if archivo.split('.')[0] == file['token_archivo']:
-                uploaded.append(file['original_filename'])
+            if (file['deleted_at'] == None) and (archivo.split('.')[0] == file['token_archivo']):
+                data = {
+                    "file_id":file['id'],
+                    "filename":file['original_filename']
+                } 
+                uploaded.append(data)
     return uploaded
 
+# 
+# -------------- Carga Nuevo prestador --------------
+# 
+def nuevo_prestador(data):
+    keys = []
+    values = []
+    query = f"insert into prestador ("
+    for key, value in data.items():
+        keys.append(key)
+        values.append(value)
+
+    for key in keys:
+        if key == keys[-1]:
+            query += f"{key}"
+        else:
+            query += f"{key},"
+    query += ") VALUES ("
+
+    for value in values:
+        if value == values[-1]:
+            if isinstance(value,int):
+                query+=f"{value}"
+            else:
+                query += f"'{value}'"
+        else:
+            if isinstance(value,int):
+                query+=f"{value},"
+            else:
+                query += f"'{value}',"
+    query += ")"
+
+    print(query)
+
+    try:
+        print(1)
+        id_prestador = apiDB.consultaGuardar(query)[0]['last_insert_id()']
+        print(id_prestador)
+        if id_prestador != None:
+            return jsonify({"ok":"Prestador creado correctamente"}),200
+    except Exception as e:
+        return jsonify(e),500
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# {
+#     "token":"O81mHXzrr8GZqvd4XQFEqeZ7DgokveZmN8adz6CqnDKSLiS2EJsJxcxeq2CqCHmRvEYGMMRi7W9AsAxuJ2sN5AHG2pGigERDKFDm",
+#     "usuario":{
+#         "username":"prestador_01",
+#         "password":"1234",
+#         "name":"Prestador"
+#     },
+#     "prestador":{
+#         "codigo":"01234",
+#         "estado":true,
+#         "tipo_doc":"dni",
+#         "nro_doc":"41803952",
+#         "apellido":"Juarez",
+#         "nombre":"Pepito Miguel",
+#         "token_firma":"h9ohsdafasdlfskñl",
+#         "calle":"Manuyel Quiroga",
+#         "localidad":"Villa Krawsi",
+#         "provincia":"San Juana",
+#         "codigo_postal":"5142",
+#         "telefono_1":"26455123122",
+#         "telefono_2":"",
+#         "email":"",
+#         "areas_id":[1,4,2,5],
+#         "matricula":"vencida"
+#     }
+# }
