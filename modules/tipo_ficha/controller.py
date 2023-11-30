@@ -34,8 +34,10 @@ def get_areas_by_id_controller(area_id):
     return apiDB.consultaSelect(query, (int(area_id),))
 
 def get_estudios_by_area_id_controller(id_area):
-    query = "SELECT * FROM estudios WHERE id_area = %s"
-    return apiDB.consultaSelect(query, (int(id_area),))
+    query = f"SELECT * FROM estudios WHERE id_area = {int(id_area)}"
+    print(query)
+    result = apiDB.consultaSelect(query)
+    return result
 
 def get_data_by_ficha_controller(ficha_id):
     query = f"SELECT area_id FROM fact_tipo_ficha WHERE tipo_ficha_id={ficha_id};"
@@ -51,8 +53,5 @@ def get_data_by_ficha_controller(ficha_id):
             estudios = get_estudios_by_area_id_controller(int(area_info['id']))
             info = {area_info['Descripcion']: estudios}
             data.update(info)
-
-    return data
-
 
     return data

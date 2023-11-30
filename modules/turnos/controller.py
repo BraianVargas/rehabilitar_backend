@@ -37,20 +37,6 @@ def getPaciente(paciente_id):
     return paciente
 
 def cargaTurno(turno,filetoken, enlace_ddjj):
-    print(
-        f"""insert into turnos (paciente_id,empresa_id,fecha,tipo_examen,created_at,file_token,observaciones,link_ddjj, tipo_ficha_id)
-            values (
-                {turno['paciente_id']},
-                {turno['empresa_id']},
-                '{turno['fecha']}',
-                '{turno['tipo_examen']}',
-                '{datetime.datetime.now()}',
-                '{filetoken}',
-                '{turno['observaciones']}',
-                '{enlace_ddjj}',
-                {int(turno['tipo_ficha'])}
-            );
-        """)
     apiDB.consultaGuardar(
         f"""insert into turnos (paciente_id,empresa_id,fecha,tipo_examen,created_at,file_token,observaciones,link_ddjj, tipo_ficha_id)
             values (
