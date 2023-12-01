@@ -1,4 +1,4 @@
-from flask import request, abort
+from flask import request, abort, jsonify
 import apiDB
 from functools import wraps
 
@@ -17,13 +17,10 @@ def verifica_roles(required_roles):
             query = "SELECT * FROM users WHERE token = %s"
             usuario = apiDB.consultaSelect(query, (data['token'],))[0]
             
-            if not usuario:
-                abort(401)  # Unauthorized
-
             roles_usuario = usuario['roles']
 
             if not any(role in roles_usuario for role in required_roles):
-                abort(403)  # Forbidden
+                return jsonify({"error":"Usuario no autorizado"}),403  # Forbidden
 
             return f(*args, **kwargs)
 

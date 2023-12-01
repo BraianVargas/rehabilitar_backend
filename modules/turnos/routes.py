@@ -63,8 +63,8 @@ def nuevoTurno():
                # else:
                #      return jsonify({'no':"La fecha seleccionada no está habilitada para asignar turno"}),401
 
-     except:
-          return jsonify({"no": "Ha ocurrido un error durante la consulta",}), 500
+     except Exception as e: 
+          return jsonify({"error": e,}), 500
 
 
 
