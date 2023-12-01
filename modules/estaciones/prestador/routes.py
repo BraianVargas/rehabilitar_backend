@@ -5,7 +5,7 @@ from datetime import datetime
 from .controller import *
 import apiOperacionesComunes,apiDB
 from modules.estaciones.prestador import prestadorBP
-from modules.usuarios.controller import nuevo_usuario
+from modules.usuarios.controller import *
 
 NOT_ALLOWED_EXTENSIONS = ['exe','zip','rar','sql','msi','py','cs']
 
@@ -36,6 +36,7 @@ def index_prestadores():
     return "Prestadores"
 
 @prestadorBP.route('/cargar_estudio', methods=['POST'])
+@verifica_roles(['admin','prestadores'])
 def carga_estudio():
     if request.method == 'POST':
         data = json.loads(request.values.get('json'))

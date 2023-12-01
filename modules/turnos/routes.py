@@ -2,6 +2,7 @@ from modules.turnos import turnosBP
 from flask import Flask, jsonify, request, send_file
 import datetime,json
 from .controller import *
+from modules.usuarios.controller import verifica_roles
 
 import apiOperacionesComunes,apiDB
 from .pdf import *
@@ -25,6 +26,7 @@ def middle_verif_token():
 
 
 @turnosBP.route('/nuevo', methods=['POST'])
+@verifica_roles(['admin','secretaria','administracion'])
 def nuevoTurno():
      try:
           if request.method == 'POST':
@@ -67,6 +69,7 @@ def nuevoTurno():
 
 
 @turnosBP.route('/today', methods=['GET','POST'])
+@verifica_roles(['admin','secretaria','administracion', 'prestadores'])
 def get_turnos_dia():
      turnos = []
      try:
@@ -100,6 +103,7 @@ def get_informe(_token):
           return jsonify({"error":"Token de archivo no valido."}),404
 
 @turnosBP.route('/delete', methods=['GET','POST'])
+@verifica_roles(['admin'])
 def del_turno():
      try:
           status = (bool(delete_turno(request.json.get('turno_id'))))
@@ -112,6 +116,7 @@ def del_turno():
 
 
 @turnosBP.route('/confirma', methods=["POST"])
+@verifica_roles(['admin','secretaria'])
 def conf_turno():
      try:
           turno_id = request.json.get('turno_id')
@@ -125,6 +130,7 @@ def conf_turno():
           return jsonify({"no": "Ha ocurrido un error durante la ejecucion, reintente"}), 500
 
 @turnosBP.route('/asistencia', methods=["POST"])
+@verifica_roles(['admin','secretaria'])
 def asiste_turno():
      try:
           turno_id = request.json.get('turno_id')
@@ -138,6 +144,7 @@ def asiste_turno():
           return jsonify({"no": "Ha ocurrido un error durante la ejecucion, reintente"}), 500
      
 @turnosBP.route('/atendido', methods=["POST"])
+@verifica_roles(['admin','secretaria'])
 def atiende_turno():
      try:
           turno_id = request.json.get('turno_id')
@@ -151,6 +158,7 @@ def atiende_turno():
           return jsonify({"no": "Ha ocurrido un error durante la ejecucion, reintente"}), 500
 
 @turnosBP.route('/urgente', methods=["POST"])
+@verifica_roles(['admin','secretaria'])
 def set_urgentes():
      try:
           turno_id = request.json.get('turno_id')
@@ -164,6 +172,7 @@ def set_urgentes():
           return jsonify({"no": "Ha ocurrido un error durante la ejecucion, reintente"}), 500
 
 @turnosBP.route('/gestion',methods=["GET","POST"])
+@verifica_roles(['admin','secretaria'])
 def gestion_turnos(): 
      if request.method == "POST":
           data=request.get_json()
@@ -173,6 +182,7 @@ def gestion_turnos():
           return jsonify(response)
 
 @turnosBP.route('/ver/by_fecha', methods=['GET','POST'])
+@verifica_roles(['admin','secretaria','prestadores'])
 def get_turnos_by_fecha():
      try:
           if request.method == "POST":
@@ -186,6 +196,7 @@ def get_turnos_by_fecha():
      
 
 @turnosBP.route('/change_tipo_ficha/<int:turno_id>',methods=['POST'])
+@verifica_roles(['admin','secretaria'])
 def update_tipo_ficha(turno_id):
      try:
           data=request.get_json()
