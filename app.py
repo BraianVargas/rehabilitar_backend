@@ -18,11 +18,13 @@ from modules.imagenes import *
 from modules.tipo_ficha import *
 from modules.estaciones.prestador import *
 from modules.estaciones import *
+from modules.forms_informes import *
 
 app = Flask(__name__)
 
 app.register_blueprint(apiFileUpload, url_prefix='/fileUpload')
 app.register_blueprint(apiInformes, url_prefix='/informes')
+app.register_blueprint(informesBP, url_prefix='/informes')
 app.register_blueprint(apiLogin, url_prefix='/login')
 app.register_blueprint(apiEmpresas, url_prefix='/empresas')
 app.register_blueprint(apiPacientes, url_prefix='/pacientes')
@@ -46,10 +48,10 @@ CORS(app)
 @app.route('/', methods=['get'])
 def test():
     db = mysql.connector.connect(host=str(apiDB.server_host),
-                             user=str(apiDB.server_user),
-                             passwd=str(apiDB.server_passwd),
-                             db=str(apiDB.server_db),
-                             port=str(apiDB.server_port))
+        user=str(apiDB.server_user),
+        passwd=str(apiDB.server_passwd),
+        db=str(apiDB.server_db),
+        port=str(apiDB.server_port))
 
 
     cursor = db.cursor(dictionary=True)
@@ -62,4 +64,4 @@ def test():
 
 
 if __name__ == '__main__':
-   app.run(host='0.0.0.0',debug=True,port=5000)
+    app.run(host='0.0.0.0',debug=True,port=5000)

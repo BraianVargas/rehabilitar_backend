@@ -1,7 +1,7 @@
 from flask import request, abort, jsonify
 import apiDB
 from functools import wraps
-
+import json
 
 def nuevo_usuario(data):
     query = f"insert into users (username, password, name) values ('{data['username']}','{data['password']}','{data['name']}')"
@@ -12,8 +12,13 @@ def verifica_roles(required_roles):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
-            data = request.get_json()
-            
+            try:
+                data = request.get_json()
+            except:
+                try:
+                    data = json.loads(request.values.get('json'))
+                except Exception as e:
+                    return jsonify(e),500
             query = "SELECT * FROM users WHERE token = %s"
             usuario = apiDB.consultaSelect(query, (data['token'],))[0]
             
