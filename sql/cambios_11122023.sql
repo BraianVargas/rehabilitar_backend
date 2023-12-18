@@ -16,25 +16,20 @@ create table campos(
     default_value varchar(100),
     form_orden int,
     
-    primary key (id),
-    
-    foreign key (id_area) references area(id)
+    primary key (id)
 );
 
 drop table campos_informacion;
 create table campos_informacion(
 	id int auto_increment,
-    id_turno int, 
-    id_area int,
-    name varchar(100),
-    label varchar(100),
+    id_campo int,
+    id_turno int,
     value varchar(150),
     id_adjunto int,
     
     primary key (id),
     foreign key (id_turno) references turnos(id),
-    foreign key (id_area) references area(id),
-    foreign key (id_adjunto) references archivos(id)
+    foreign key (id_campo) references campos(id)
 );
 
 
