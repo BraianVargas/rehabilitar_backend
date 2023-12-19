@@ -28,32 +28,22 @@ def middle_verif_token():
         else:
             pass
 
-
 @informesBP.route('/campos/<int:_area_id>', methods=['POST'])
-def get_campos(_area_id):
-    campos = get_data_campos(_area_id)
+def get_campos(_area_id,):
+    data = request.get_json()
+
+    campos = get_data_campos(_area_id,str(data['categoria']))
     return jsonify(campos),200
 
-@informesBP.route('/campos/<int:_area_id>/<int:_id_turno>/save', methods=['POST'])
-def save_campos(_area_id, _id_turno):
+
+@informesBP.route('/campos/<int:_id_area>/<int:_id_turno>/save', methods=['POST'])
+def save_campos(_id_area, _id_turno):
     if request.headers['Content-Type'] == 'application/json':
         data = request.get_json()
     else:
         data = json.loads(request.values.get('json'))
     data = data['campos']
-    print(data)
-    input()
-    final_data = []
-    for info in data:
-        query = "INSERT INTO campos_informacion (id_campo, id_turno, value, id_adjunto) values (%s,%s,%s,%s)"
-        apiDB.consultaGuardar(query, (info['campo_id'], _id_turno, info['value'],str(list(info['id_adjunto']))))
-        data_to_save = {
-            "campo_id" : info['campo_id'],
-            "id_turno" : _id_turno,
-            "value" : info['value'],
-            "id_adjunto" : info['id_adjunto']
-        }
-        final_data.append(data_to_save)
+    final_data = save_info_campos(data, _id_turno)
     return final_data
 
 @informesBP.route('/campos/<int:_id_turno>/get_info', methods=['POST'])
