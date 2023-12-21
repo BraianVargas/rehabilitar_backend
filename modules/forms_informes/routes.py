@@ -35,7 +35,6 @@ def get_campos(_area_id,):
     campos = get_data_campos(_area_id,str(data['categoria']))
     return jsonify(campos),200
 
-
 @informesBP.route('/campos/<int:_id_area>/<int:_id_turno>/save', methods=['POST'])
 def save_campos(_id_area, _id_turno):
     if request.headers['Content-Type'] == 'application/json':
@@ -54,4 +53,5 @@ def get_info(_id_turno):
 
 @informesBP.route('/campos/<int:_id_turno>/get_informe', methods = ['POST'])
 def get_informe(_id_turno):
-    pass
+    dataCatch_pdfGenerator(_id_turno)
+    return "pdf generado"

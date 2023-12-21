@@ -2,6 +2,11 @@ import datetime, holidays, apiDB, string, secrets
 import apiOperacionesComunes
 from flask import jsonify
 
+def get_turno_by_id(_id_turno):
+    query = "SELECT * FROM turnos WHERE id = '%s'"
+    response = apiDB.consultaSelect(query,(_id_turno,))
+    return response
+
 def verifica_habil_feriado(fecha):
     pais = "AR"  
     feriados = holidays.CountryHoliday(pais)
@@ -23,7 +28,6 @@ def verifica_no_turno(paciente_id,empresa_id,fecha):
         return True
     else:
         return False
-
 
 def verifica_disponibles(fecha):
     turnos = apiDB.consultaSelect(f"select count(*) from turnos where fecha = '{fecha}'")

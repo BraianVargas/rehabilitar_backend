@@ -1,5 +1,8 @@
 from flask import jsonify
 
+from ..turnos.controller import *
+from ..ddjj.controller import *
+from .pdf import *
 import apiDB
 
 def get_data_campos(id_area, categoria):
@@ -38,3 +41,29 @@ def save_info_campos(data, _id_turno):
         final_data.append(data_to_save)
 
     return final_data
+
+def get_info_paciente(id_paciente):
+    query = "SELECT * FROM pacientes WHERE id = '%s'"
+    result = apiDB.consultaSelect(query,(id_paciente,))
+    return result
+def get_info_empresa(id_empresa):
+    query = "SELECT * FROM empresas WHERE id = '%s'"
+    result = apiDB.consultaSelect(query,(id_empresa,))
+    return result
+
+def get_info_campos_by_turno(id_turno):
+    query = f"SELECT * FROM campos_informacion INNER JOIN campos ON id_campo = campos.id WHERE id_turno = '%s'"
+    info_campo = apiDB.consultaSelect(query,(int(id_turno),))
+    return info_campo
+    
+def generate_pdf(info_turno,info_paciente,info_empresa,ddjj_paciente,info_campos):
+    genera_ddjj(info_turno,info_paciente,ddjj_paciente)
+
+def dataCatch_pdfGenerator(id_turno):
+    info_turno = get_turno_by_id(id_turno)[0]
+    info_paciente = get_info_paciente(info_turno['paciente_id'])[0]
+    info_empresa = get_info_empresa(info_turno['empresa_id'])[0]
+    ddjj_paciente = get_ddjj_paciente(info_turno['paciente_id'], info_turno['empresa_id'])
+    info_campos = get_info_campos_by_turno(info_turno['id'])
+
+    generate_pdf(info_turno,info_paciente,info_empresa,ddjj_paciente,info_campos)

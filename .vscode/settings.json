@@ -14,7 +14,7 @@
             "server": "localhost",
             "port": 3306,
             "driver": "MySQL",
-            "name": "localhost",
+            "name": "Localhost",
             "database": "rehabilitar_testing",
             "username": "root",
             "password": ""

@@ -1,109 +1,81 @@
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, PageTemplate, Frame, Paragraph, Spacer, Image, Table
 from reportlab.lib import colors
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle, getSampleStyleSheet
-from reportlab.platypus.flowables import HRFlowable
 from reportlab.lib.units import inch
+from reportlab.platypus import TableStyle
+
 import os
 import string, secrets
 from config import *
+import datetime
+import apiDB
+from datetime import datetime
 
 
-###################################################################################
-#              GENERA UN TOKEN UNICO PARA EL USUARIO QUE HACE LOGIN
-###################################################################################
+from .pdf_styles import *
+
 def fileNameGen():
     alphabet = string.ascii_letters + string.digits
     password = ''.join(secrets.choice(alphabet) for i in range(20))
     return password
 
-def genera_comprobante_turno(nombre, dni, fecha_turno, tipo, empresa_id):
-    day,month,year = (fecha_turno.replace("/", "-")).split('-')
-    day = day.zfill(2)
-    month = month.zfill(2)
-    fecha_turno = f"{day}-{month}-{year}"
-    tipo = tipo.lower()
+def get_tipo_ficha_name(id_ficha):
+    query = "SELECT nombre_ficha from tipo_ficha where id = '%s'"
+    return apiDB.consultaSelect(query, (id_ficha,))[0]['nombre_ficha']
+
+def genera_cabecera(title):
+    # logo_path = "static/img/main-logo.png"
+    pass
+
+
+def genera_ddjj(info_turno ,info_paciente, ddjj_paciente):
+    logo_path = "static/img/main-logo.png"
+    file_path = f"./files/temp/informe.pdf"     
+    # Contenido del PDF
+    content = []   
+
+    # Crear el documento PDF
+    pdf = SimpleDocTemplate(file_path, pagesize=letter, leftMargin=20, rightMargin=20, topMargin=20, bottomMargin=20)
     
-    
-    destino = f"./turnos/{tipo}/{fecha_turno}/" 
+    # Header con imagen (logo de la empresa)
+    logo = Image(logo_path, width=120, height=50)
+    logo.hAlign = 'LEFT'
 
-    if not os.path.exists(destino):
-        os.makedirs(destino)
+    # Título centrado en la misma fila que el logo
+    title_text = "<h1><b>Declaración Jurada</b></h1>"
+    title = Table([[logo, Spacer(1, 0), Paragraph(title_text)]], colWidths=[1.5*inch, 1*inch, 3*inch])
+    title.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'MIDDLE')]))
 
-    # Genera token y regenera en caso de existir
-    fileToken = fileNameGen()
-    while (os.path.exists(destino + fileToken + ".pdf")):
-        fileToken = fileNameGen()
+    # Generar datos de la tabla
+    fecha_nacimiento = info_paciente['fecha_nacimiento']
+    fecha_actual = datetime.now()
+    edad = fecha_actual.year - fecha_nacimiento.year - ((fecha_actual.month, fecha_actual.day) < (fecha_nacimiento.month, fecha_nacimiento.day))
 
-    output_file = os.path.join(destino, f"{fileToken}.pdf")
-    # Ruta de la imagen de marca de agua
-    marca_de_agua = "static/img/main-logo.png"
-    #Tamaño de pagina del PDF 
-    pdf_width = 500
-    pdf_height = 250
-    # Tamaño deseado para la marca de agua
-    marca_de_agua_width = 400  # Ancho
-    marca_de_agua_height = 200  # Alto
+    data = f"""
+        <b>Nombre y Apellido:</b> {info_paciente['nombres']} {info_paciente['apellidos']}
+        <br/>
+        <b>Edad:</b> &nbsp;&nbsp; {edad}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <b>Documento:</b> &nbsp;&nbsp; {info_paciente['documento']}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <b>Fecha:</b> &nbsp;&nbsp; {fecha_actual.date()}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <br/>
+        <b>Tipo de Ficha:</b> {get_tipo_ficha_name(info_turno['tipo_ficha_id'])} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <b>Tipo de Examen:</b> {(info_turno['tipo_examen']).upper()} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-    # Crear el objeto PDF con el tamaño personalizado
-    pdf = SimpleDocTemplate(output_file, pagesize=(pdf_width, pdf_height))
+    """
 
-    # Definir estilo para el texto
-    styles = getSampleStyleSheet()
-    tipo_style = ParagraphStyle(name='TipoStyle', parent=styles['Normal'], alignment=1, fontName='Times-Roman', fontSize=20, bottomIndent=5)
-    nombre_style = ParagraphStyle(name='NombreStyle', parent=styles['Normal'], alignment=1, fontName='Helvetica-Bold', fontSize=12, bottomIndent=5)
-    fecha_turno_style = ParagraphStyle(name='FechaTurnoStyle', parent=styles['Normal'], alignment=1, fontName='Helvetica-Bold', fontSize=12, bottomIndent=5)
-    dni_style = ParagraphStyle(name='DNIStyle', parent=styles['Normal'], fontName='Helvetica-Bold', alignment=1, fontSize=12, bottomIndent=5)
-    enlace_style = ParagraphStyle(name='EnlaceStyle', parent=styles['Normal'], alignment=1, fontName='Courier-Bold',textColor=colors.blue, fontSize=10)
+    # Crear la tabla
+    table = Paragraph(data)
 
-    # Definir plantilla de página con marca de agua
-    def add_watermark(canvas, doc):
-        canvas.saveState()
+    # Footer con texto
+    footer_text = "<br/> 9 de Julio 433 Oeste - (5400) Capital - San Juan - Tels.: 0264-4202469 ó 0264-4225546 - Email: rehabilitasj@speedy.com.ar <br/> <b>Rehabilitar San Juan 2023 © Todos los derechos reservados </b> "
+    footer = Paragraph(footer_text, footer_style)
 
-        # Dibujar la imagen de marca de agua con opacidad al 10% como fondo
-        canvas.setFillColorRGB(1, 1, 1, 0.1)
-        # Obtener el tamaño de la página
-        page_width = pdf_width
-        page_height = pdf_height
-        # Calcular la posición centrada de la marca de agua
-        x = (page_width - marca_de_agua_width) / 2
-        y = (page_height - marca_de_agua_height) / 2
+    # Agregar elementos al contenido del PDF
+    content.append(title)
+    content.append(Spacer(1, 12))
+    content.append(table)
+    content.append(Spacer(1, 12))
+    content.append(footer)
 
-        # Dibujar la imagen de marca de agua en el centro con padding
-        canvas.drawImage(marca_de_agua, x, y, width=marca_de_agua_width, height=marca_de_agua_height, mask='auto')
-
-        canvas.restoreState()
-
-    page_template = PageTemplate(id='withwatermark', frames=[Frame(0, 0, pdf_width, pdf_height, id='normal')], onPage=add_watermark)
-
-    pdf.addPageTemplates([page_template])
-
-    # Crear el contenido del PDF
-    content = []
-
-    # Agregar contenido con el formato deseado
-    # enlace = f'<a href="{ROOT_PATH}/ddjj/{dni}"> Enlace a Declaración Jurada</a>'
-    enlace = f"{ROOT_PATH}/ddjj/nueva?dni={dni}&empresa_id={empresa_id}"
-    btn_enlace=f'<a href="{ROOT_PATH}/ddjj/nueva?dni={dni}&empresa_id={empresa_id}"> Enlace a Declaración Jurada</a>'
-    tipo_paragraph = Paragraph(tipo.upper(),tipo_style)
-    nombre_paragraph = Paragraph("<u>Nombre y Apellido:</u> <br/><br/>" + nombre, nombre_style)
-    dni_paragraph = Paragraph("<u>DNI:</u> <br/><br/>" + dni, dni_style)
-    fecha_turno_paragraph = Paragraph("<u>Fecha de turno:</u> <br/><br/>" + fecha_turno, fecha_turno_style)
-    enlace_paragraph = Paragraph(btn_enlace, enlace_style)
-    # enlace_paragraph2 = Paragraph(enlace, enlace_style)
-
-    content.append(Spacer(1, 15))
-    content.append(tipo_paragraph)
-    content.append(Spacer(1, 20))
-    content.append(nombre_paragraph)
-    content.append(Spacer(1, 10)) 
-    content.append(dni_paragraph)
-    content.append(Spacer(1, 10))
-    content.append(fecha_turno_paragraph)
-    content.append(Spacer(1, 10))
-    content.append(enlace_paragraph)
-
-    # Guardar el contenido en el PDF
+    # Construir el PDF
     pdf.build(content)
-    return fileToken,enlace
-

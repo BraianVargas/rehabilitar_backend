@@ -48,3 +48,14 @@ def update_ddjj(ddjj_id=None,data=None):
 
         return jsonify({'Mensaje': 'Datos procesados exitosamente'}), 200
     
+def get_ddjj_by_id(ddjj_id):
+    query = "SELECT * FROM ddjj WHERE id = '%s'"
+    result = apiDB.consultaSelect(query,(ddjj_id,))
+    return result
+
+def get_ddjj_paciente(paciente_id, empresa_id):
+    query = "SELECT ddjj_id FROM fact_ddjj WHERE paciente_id = '%s' AND empresa_id = '%s'"
+    id_ddjj = apiDB.consultaSelect(query,(paciente_id,empresa_id,))
+    id_ddjj = int(id_ddjj[0]['ddjj_id'])
+    ddjj_info = get_ddjj_by_id(int(id_ddjj))
+    return ddjj_info
