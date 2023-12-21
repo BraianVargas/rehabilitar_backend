@@ -82,9 +82,10 @@ def genera_comprobante_turno(nombre, dni, fecha_turno, tipo, empresa_id):
     content = []
 
     # Agregar contenido con el formato deseado
-    # enlace = f'<a href="{ROOT_PATH}/ddjj/{dni}"> Enlace a Declaración Jurada</a>'
-    enlace = f"{ROOT_PATH}/ddjj/nueva?dni={dni}&empresa_id={empresa_id}"
-    btn_enlace=f'<a href="{ROOT_PATH}/ddjj/nueva?dni={dni}&empresa_id={empresa_id}"> Enlace a Declaración Jurada</a>'
+    # https://'url base'/#/declaracion-jurada/declaracion-jurada/'dni'
+    # enlace = f"{ROOT_PATH}/ddjj/nueva?dni={dni}&empresa_id={empresa_id}"
+    # enlace = f'<a href="{ROOT_PATH}/#/declaracion-jurada/declaracion-jurada/{dni}"> Enlace a Declaración Jurada</a>'
+    btn_enlace=f'<a href="{ROOT_PATH}/#/declaracion-jurada/nueva?dni={dni}&empresa_id={empresa_id}"> Enlace a Declaración Jurada</a>'
     tipo_paragraph = Paragraph(tipo.upper(),tipo_style)
     nombre_paragraph = Paragraph("<u>Nombre y Apellido:</u> <br/><br/>" + nombre, nombre_style)
     dni_paragraph = Paragraph("<u>DNI:</u> <br/><br/>" + dni, dni_style)

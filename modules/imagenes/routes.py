@@ -31,8 +31,9 @@ def upload_photo():
     
     pacientes = apiDB.consultaSelect(f"select * from pacientes where id = {data['paciente_id']}")
     if data['tipo'] in ALLOWED_TYPES:
-        fecha=str(datetime.now().year) + "/"+ str(datetime.now().month)+ "/"+ str(datetime.now().day )
-        destino=  "Imagenes/" +str(data['tipo']).upper() +'/'+ fecha +'/'+ pacientes[0]['documento']
+        fecha=apiDB.consultaSelect("SELECT fecha FROM turnos WHERE id='%s'",(int(data['turno_id']),))[0]['fecha'].date()
+        fecha=str(fecha.year) + "/"+ str(fecha.month)+ "/"+ str(fecha.day )
+        destino=  "files/imagenes/" +str(data['tipo']).upper() +'/'+ fecha +'/'+ pacientes[0]['documento']
     else:
         return jsonify({"error":f"Tipo de carga no válido. Tipos permitidos: {ALLOWED_TYPES}"})
     if not os.path.exists(destino):

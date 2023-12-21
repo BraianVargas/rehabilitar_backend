@@ -60,8 +60,13 @@ def genera_ddjj(info_turno ,info_paciente, ddjj_paciente):
         <br/>
         <b>Tipo de Ficha:</b> {get_tipo_ficha_name(info_turno['tipo_ficha_id'])} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <b>Tipo de Examen:</b> {(info_turno['tipo_examen']).upper()} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
     """
+    fecha = info_turno['fecha']
+    fecha=str(fecha.year) + "/"+ str(fecha.month)+ "/"+ str(fecha.day )
+    foto_path="files/imagenes/FOTO/"+fecha+'/'+info_paciente['documento']+'/'+info_turno['img_token']+'.png'
+    foto =  Image(foto_path, width=100,height=100)
+    header = Table([[Paragraph(data), Spacer(1, 0), foto]], colWidths=[5*inch, .5*inch, 1*inch])
+    header.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'LEFT')]))
 
     # Crear la tabla
     table = Paragraph(data)
@@ -73,7 +78,7 @@ def genera_ddjj(info_turno ,info_paciente, ddjj_paciente):
     # Agregar elementos al contenido del PDF
     content.append(title)
     content.append(Spacer(1, 12))
-    content.append(table)
+    content.append(header)
     content.append(Spacer(1, 12))
     content.append(footer)
 
