@@ -6,8 +6,8 @@ from .pdf import *
 import apiDB
 
 def get_data_campos(id_area, categoria):
-    query = "select * from campos where id_area = '%s' and categoria_form = %s"
-    campos = apiDB.consultaSelect(query, (id_area, categoria))
+    query = "select * from campos where id_area = '%s' and categoria = %s"
+    campos = apiDB.consultaSelect(query, (id_area, categoria,))
     result = []
 
     for campo in campos:
