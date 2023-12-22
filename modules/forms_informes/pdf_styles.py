@@ -11,6 +11,7 @@ title_style = ParagraphStyle(
     parent=styles['Heading1'],
     alignment=1,  # 0=left, 1=center, 2=right
     spaceAfter=12,
+    spaceBefore=12
 )
 footer_style = ParagraphStyle(
     'FooterStyle',

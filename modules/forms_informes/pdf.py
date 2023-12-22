@@ -11,8 +11,10 @@ import datetime
 import apiDB
 from datetime import datetime
 
-
 from .pdf_styles import *
+
+ALLOWED_IMAGE_EXTENSIONS=['png','jpg','jpeg','jfif']
+
 
 def fileNameGen():
     alphabet = string.ascii_letters + string.digits
@@ -42,8 +44,8 @@ def genera_ddjj(info_turno ,info_paciente, ddjj_paciente):
     logo.hAlign = 'LEFT'
 
     # Título centrado en la misma fila que el logo
-    title_text = "<h1><b>Declaración Jurada</b></h1>"
-    title = Table([[logo, Spacer(1, 0), Paragraph(title_text)]], colWidths=[1.5*inch, 1*inch, 3*inch])
+    title_text = "<h1 style='font-size: 40px;'><b>Declaración Jurada</b></h1>"
+    title = Table([[logo, Spacer(1, 1), Paragraph(title_text)]], colWidths=[2*inch, 1*inch, 5*inch])
     title.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'MIDDLE')]))
 
     # Generar datos de la tabla
@@ -58,13 +60,23 @@ def genera_ddjj(info_turno ,info_paciente, ddjj_paciente):
         <b>Documento:</b> &nbsp;&nbsp; {info_paciente['documento']}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <b>Fecha:</b> &nbsp;&nbsp; {fecha_actual.date()}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <br/>
-        <b>Tipo de Ficha:</b> {get_tipo_ficha_name(info_turno['tipo_ficha_id'])} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <b>Tipo de Ficha:</b> {get_tipo_ficha_name(info_turno['tipo_ficha_id'])} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+        <br/>
         <b>Tipo de Examen:</b> {(info_turno['tipo_examen']).upper()} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     """
     fecha = info_turno['fecha']
     fecha=str(fecha.year) + "/"+ str(fecha.month)+ "/"+ str(fecha.day )
-    foto_path="files/imagenes/FOTO/"+fecha+'/'+info_paciente['documento']+'/'+info_turno['img_token']+'.png'
-    foto =  Image(foto_path, width=100,height=100)
+    name_photo = info_turno['img_token']
+    foto_path="files/imagenes/FOTO/"+fecha+'/'+info_paciente['documento']+'/'
+
+    if name_photo != None:        
+        for ext in ALLOWED_IMAGE_EXTENSIONS:
+            path_aux = foto_path + name_photo + '.' + ext
+            if os.path.exists(path_aux):
+                foto_path = path_aux
+    else:
+        foto_path = 'static/img/photo_not_found.jpg'
+    foto =  Image(foto_path, width=60,height=60)
     header = Table([[Paragraph(data), Spacer(1, 0), foto]], colWidths=[5*inch, .5*inch, 1*inch])
     header.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'LEFT')]))
 

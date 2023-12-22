@@ -17,6 +17,7 @@ def get_data_campos(id_area, categoria):
             "name":campo["name"],
             "label":campo["label"],
             "type":campo["type"],
+            "clase":campo["clase"],
             "options":campo["options"],
             "default_value":campo["default_value"],
             "form_orden":campo["form_orden"],
