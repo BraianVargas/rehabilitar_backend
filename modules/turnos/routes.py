@@ -93,7 +93,7 @@ def get_informe(_token):
           year = (fecha.split('-'))[0]
           paciente = getPaciente(int(dataTurno[0]['paciente_id']))
           current_directory = os.getcwd()
-          file_directory = os.path.join(current_directory, 'turnos', dataTurno[0]['tipo_examen'].lower(), f"{day}-{month}-{year}")
+          file_directory = os.path.join(current_directory, 'files/turnos/comprobantes', dataTurno[0]['tipo_examen'].lower(), f"{day}-{month}-{year}")
           if not os.path.exists(file_directory):
                return jsonify({"error":"Archivo no encontrado o ruta de archivo inexistente."}),404
           turno = os.path.join(file_directory, f"{_token}.pdf")

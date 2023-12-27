@@ -1,8 +1,7 @@
 ###################################################################################
 #                               DEVELOPMENT
 ###################################################################################
-ROOT_PATH = "https://app.rehabilitarsanjuan.com"
-ROOT_PATH = "localhost:5000"
+ROOT_PATH = "https://test.rehabilitarsanjuan.com"
 
 # # Base de datos
 server_host="127.0.0.1"

@@ -6,10 +6,17 @@ from .pdf import *
 import apiDB
 
 def get_data_campos(id_area, categoria):
-    query = "select * from campos where id_area = '%s' and categoria = %s"
-    campos = apiDB.consultaSelect(query, (id_area, categoria,))
-    result = []
+    if id_area == 2:
+        query = "select * from campos where id_area = '%s' and categoria = %s"
+        campos = apiDB.consultaSelect(query, (id_area, categoria,))
+    else:
+        query = "select * from campos where id_area = '%s'"
+        campos = apiDB.consultaSelect(query, (id_area,))
 
+    result = []
+    print(campos)
+    print(id_area)
+    print(query)
     for campo in campos:
         campos_dict={
             "campo_id":campo["id"],
