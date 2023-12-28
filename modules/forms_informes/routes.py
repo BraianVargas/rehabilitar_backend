@@ -53,5 +53,9 @@ def get_info(_id_turno):
 
 @informesBP.route('/campos/<int:_id_turno>/get_informe', methods = ['POST'])
 def get_informe(_id_turno):
-    dataCatch_pdfGenerator(_id_turno)
-    return "pdf generado"
+    status = dataCatch_pdfGenerator(_id_turno)
+    if status != True:
+        return status
+    else:
+        return jsonify({"ok":"PDF generado correctamente"}),200
+

@@ -11,6 +11,7 @@ from config import *
 import datetime
 import apiDB
 from datetime import datetime
+import locale
 
 from .pdf_styles import *
 
@@ -45,6 +46,33 @@ def genera_cabecera(title_text):
     line = HRFlowable(width="100%", thickness=1, spaceAfter=5, color="black")
     return title,line
 
+def get_personal_data(info_paciente, info_turno, fecha):
+    
+    fecha_nacimiento = info_paciente['fecha_nacimiento']
+    fecha_actual = datetime.now()
+    
+    edad = fecha_actual.year - fecha_nacimiento.year - ((fecha_actual.month, fecha_actual.day) < (fecha_nacimiento.month, fecha_nacimiento.day))
+
+    personal_data_body = f"""
+        <b>Nombre y Apellido:</b> {info_paciente['nombres']} {info_paciente['apellidos']}
+        <br/>
+        <b>Edad:</b> &nbsp;&nbsp; {edad}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <b>Documento:</b> &nbsp;&nbsp; {info_paciente['documento']}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <b>Fecha:</b> &nbsp;&nbsp; {fecha_actual.date()}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <br/>
+        <b>Tipo de Ficha:</b> {get_tipo_ficha_name(info_turno['tipo_ficha_id'])} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+        <br/>
+        <b>Tipo de Examen:</b> {(info_turno['tipo_examen']).upper()} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    """
+    name_photo = info_turno['img_token']
+    foto_path = get_foto_paciente(fecha, name_photo, info_paciente['documento'], "foto")
+    foto =  Image(foto_path, width=60,height=60)
+    personal_data = Table([[Paragraph(personal_data_body), Spacer(1, 0), foto]], colWidths=[5*inch, .5*inch, 1*inch])
+    personal_data.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'LEFT')]))
+
+    return personal_data
+
+
 def genera_footer():
     # Footer con texto
     footer_text = "<br/> 9 de Julio 433 Oeste - (5400) Capital - San Juan - Tels.: 0264-4202469 ó 0264-4225546 - Email: rehabilitasj@speedy.com.ar <br/> <b>Rehabilitar San Juan 2023 © Todos los derechos reservados </b> "
@@ -66,10 +94,25 @@ def get_foto_paciente(fecha,name_photo,documento_paciente,tipo):
 
     return foto_path
 
-def genera_ddjj(info_turno ,info_paciente, ddjj_paciente):
-    linea2 = HRFlowable(width="20%", thickness=1, spaceAfter=5, color="black")
+def get_firma_paciente(fecha,name_firma, documento_paciente,tipo):
+    firma_path = f"files/imagenes/{str(tipo.upper())}/{str(fecha)}/{str(documento_paciente)}/"
+    if os.path.exists(firma_path):
+        if name_firma != None:
+            for ext in ALLOWED_IMAGE_EXTENSIONS:
+                path_aux = f"{firma_path}/{name_firma}.{ext}"
+                if os.path.exists(path_aux):
+                    firma_path = path_aux
+        else:
+            firma_path = "static/img/firma_not_found.png"
+    else:
+        firma_path = "static/img/firma_not_found.png"
+    return firma_path
 
-    file_path = f"./files/informes/temp/"
+
+def genera_ddjj(info_turno ,info_paciente, ddjj_paciente):
+
+    file_path = f"files/informes/temp/"
+
     if not os.path.exists(file_path):
         os.makedirs(file_path)
     # Contenido del PDF
@@ -79,33 +122,15 @@ def genera_ddjj(info_turno ,info_paciente, ddjj_paciente):
     content.append(linea)
 
     # Crear el documento PDF
-    file_path = file_path + info_paciente['documento'] + '.pdf'
+    file_path = file_path + info_paciente['documento'] + '- ddjj'+ '.pdf'
     pdf = SimpleDocTemplate(file_path, pagesize=letter, leftMargin=20, rightMargin=20, topMargin=20, bottomMargin=20)
 
-
     # Generar datos de la tabla
-    fecha_nacimiento = info_paciente['fecha_nacimiento']
-    fecha_actual = datetime.now()
-    edad = fecha_actual.year - fecha_nacimiento.year - ((fecha_actual.month, fecha_actual.day) < (fecha_nacimiento.month, fecha_nacimiento.day))
-
-    personal_data_body = f"""
-        <b>Nombre y Apellido:</b> {info_paciente['nombres']} {info_paciente['apellidos']}
-        <br/>
-        <b>Edad:</b> &nbsp;&nbsp; {edad}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <b>Documento:</b> &nbsp;&nbsp; {info_paciente['documento']}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <b>Fecha:</b> &nbsp;&nbsp; {fecha_actual.date()}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <br/>
-        <b>Tipo de Ficha:</b> {get_tipo_ficha_name(info_turno['tipo_ficha_id'])} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-        <br/>
-        <b>Tipo de Examen:</b> {(info_turno['tipo_examen']).upper()} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    """
     fecha = info_turno['fecha']
     fecha=str(fecha.year) + "/"+ str(fecha.month)+ "/"+ str(fecha.day )
-    name_photo = info_turno['img_token']
-    foto_path = get_foto_paciente(fecha, name_photo, info_paciente['documento'], "foto")
-    foto =  Image(foto_path, width=60,height=60)
-    personal_data = Table([[Paragraph(personal_data_body), Spacer(1, 0), foto]], colWidths=[5*inch, .5*inch, 1*inch])
-    personal_data.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'LEFT')]))
+    
+    personal_data = get_personal_data(info_paciente, info_turno, fecha)
+
 
     yes_icon="<span color='green'>&#10004;</span>"
     no_icon="<span color='red'>&#10006;</span>"
@@ -226,7 +251,7 @@ def genera_ddjj(info_turno ,info_paciente, ddjj_paciente):
     leyenda = "<b>&nbsp;&nbsp;&nbsp;Declaro que la información suministrada es verídica. </b>"
     
     name_photo = info_turno['firma_token']
-    firma_path= get_foto_paciente(fecha, name_photo, info_paciente['documento'], "firma")
+    firma_path= get_firma_paciente(fecha, name_photo, info_paciente['documento'], "firma")
     firma = Image(firma_path,width=120,height=60)
 
 
@@ -258,5 +283,164 @@ def genera_ddjj(info_turno ,info_paciente, ddjj_paciente):
     content.append(linea)
     content.append(genera_footer())
 
-    # Construir el PDF
+    pdf.build(content)
+
+
+def genera_consentimiento(info_paciente, info_turno):
+    file_path = "files/informes/temp/"
+    
+    if not os.path.exists(file_path):
+        os.makedirs(file_path)
+    # Contenido del PDF
+    content = []
+    header, linea = genera_cabecera(title_text = "<b>Consentimiento</b>")
+    content.append(header)
+    content.append(linea)
+    
+    # Crear el documento PDF
+    file_path = file_path + info_paciente['documento'] + ' - consentimiento' + '.pdf'
+    pdf = SimpleDocTemplate(file_path, pagesize=letter, leftMargin=20, rightMargin=20, topMargin=20, bottomMargin=20)
+    fecha = info_turno['fecha']
+    fecha=str(fecha.year) + "/"+ str(fecha.month)+ "/"+ str(fecha.day )
+
+    # Generar datos de la tabla
+    name_photo = info_turno['img_token']
+    
+
+
+    head_concentimiento = [
+            [Paragraph('<h3>CONSENTIMIENTO INFORMADO PARA EXAMENES DE LABORATORIO</h3>',header_consentimiento_style)],
+    ]
+
+    col_widths = [7.5* inch] * 1
+    head_concentimiento_table = Table(head_concentimiento, col_widths)
+    head_concentimiento_table.setStyle(table_antecedentes_style)
+    
+    locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8') 
+
+    body_consentimiento = f"""
+    Por la presente autorizo a la empresa Rehabilitar San Juan S.R.L se me efectúen 
+    los siguientes analisis declarando que se me explicó cada uno de ellos y doy mi concentimiento libremente. <br/><br/>
+    Acepto se me realicen pruebas en orina para dosaje de sustancias de adicción: Marihuana y Cocaina.
+    <br/> <br/> <br/> <br/> 
+
+    <b>APELLIDO Y NOMBRE: </b> {info_paciente['apellidos']}, {info_paciente['nombres']} <br/> <br/> 
+    <b>N° de documento: </b> {info_paciente['documento']} <br/> <br/> 
+    <b>Fecha de nacimiento: </b> {info_paciente['fecha_nacimiento'].strftime("%d/%m/%Y")} <br/> <br/> 
+    <b>Lugar y fecha: </b> San Juan, {datetime.now().strftime("%d de %B de %Y")} <br/> <br/> 
+    
+    """
+
+    name_photo = info_turno['firma_token']
+    firma_path= get_firma_paciente(fecha, name_photo, info_paciente['documento'], "firma")
+    firma = Image(firma_path,width=120,height=60)
+
+
+    Firma = Table(
+        [
+            [
+                firma,
+                Spacer(10,0),
+                Paragraph(f"{info_paciente['apellidos']}, {info_paciente['nombres']}")
+            ],
+            [
+                linea,
+                Spacer(10,0),
+                linea
+            ],
+            [
+                Paragraph("Firma del postulante"),
+                Spacer(10,0),
+                Paragraph("Aclaración")
+            ]
+        ]
+    )
+
+
+    # Agregar elementos al contenido del PDF
+    content.append(get_personal_data(info_paciente, info_turno, fecha))
+    content.append(linea)
+    content.append(head_concentimiento_table)
+    content.append(Spacer(1, 20))
+    content.append(Paragraph(body_consentimiento.upper()))
+    content.append(Spacer(1, 45))
+    content.append(Firma)
+    content.append(Spacer(1, 170))
+    content.append(linea)
+    content.append(genera_footer())
+
+    pdf.build(content)
+
+def genera_clinico(info_campos, info_paciente, info_turno):
+    file_path = "files/informes/temp/"
+
+    if not os.path.exists(file_path):
+        os.makedirs(file_path)
+    # Contenido del PDF
+    content = []
+    header, linea = genera_cabecera(title_text = "<b>Examen Clínico</b>")
+
+    content.append(header)
+    content.append(linea)
+    
+    # Crear el documento PDF
+    file_path = file_path + info_paciente['documento'] + ' - clinico' + '.pdf'
+    pdf = SimpleDocTemplate(file_path, pagesize=letter, leftMargin=20, rightMargin=20, topMargin=20, bottomMargin=20)
+    fecha = info_turno['fecha']
+    fecha = str(fecha.year) + "/"+ str(fecha.month)+ "/"+ str(fecha.day )
+
+    # Generar datos de la tabla
+    name_photo = info_turno['img_token']
+    print(info_campos)
+    input()
+    data_clinico = [
+            [Paragraph('<h3>CONSENTIMIENTO INFORMADO PARA EXAMENES DE LABORATORIO</h3>',header_consentimiento_style)],
+            [Paragraph("Enfermedades y operaciónes previas:"), Paragraph("{}") ]
+    ]
+
+    col_widths = [3.5* inch, 2 *inch] * 1
+    data_clinico_table = Table(data_clinico, col_widths)
+    data_clinico_table.setStyle(table_antecedentes_style)
+    
+    locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8') 
+
+
+    name_photo = info_turno['firma_token']
+    firma_path= get_firma_paciente(fecha, name_photo, info_paciente['documento'], "firma")
+    firma = Image(firma_path,width=120,height=60)
+
+
+    Firma = Table(
+        [
+            [
+                firma,
+                Spacer(10,0),
+                Paragraph(f"{info_paciente['apellidos']}, {info_paciente['nombres']}")
+            ],
+            [
+                linea,
+                Spacer(10,0),
+                linea
+            ],
+            [
+                Paragraph("Firma del postulante"),
+                Spacer(10,0),
+                Paragraph("Aclaración")
+            ]
+        ]
+    )
+
+
+    # Agregar elementos al contenido del PDF
+    content.append(get_personal_data(info_paciente, info_turno, fecha))
+    content.append(linea)
+    content.append(head_concentimiento_table)
+    content.append(Spacer(1, 20))
+    content.append(Paragraph(body_consentimiento.upper()))
+    content.append(Spacer(1, 45))
+    content.append(Firma)
+    content.append(Spacer(1, 170))
+    content.append(linea)
+    content.append(genera_footer())
+
     pdf.build(content)

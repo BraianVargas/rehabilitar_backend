@@ -59,3 +59,12 @@ table_antecedentes_style = TableStyle([
     ('GRID', (0, 0), (-1, -1), 1, colors.black),  # Add grid lines
     ('SPAN', (0, 0), (-1, 0)),  # Span header across all columns
 ])
+header_consentimiento_style = ParagraphStyle(
+    'antec_styles',
+    fontSize=12,
+    parent=styles['Heading1'],
+    alignment=1,  # 0=left, 1=center, 2=right
+    spaceAfter=12,
+    spaceBefore=12,
+    textColor=white  # Set text color to white
+)

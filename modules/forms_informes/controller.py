@@ -1,4 +1,5 @@
 from flask import jsonify
+import json
 
 from ..turnos.controller import *
 from ..ddjj.controller import *
@@ -14,10 +15,9 @@ def get_data_campos(id_area, categoria):
         campos = apiDB.consultaSelect(query, (id_area,))
 
     result = []
-    print(campos)
-    print(id_area)
-    print(query)
     for campo in campos:
+        options = json.loads(campo["options"]) if campo['options'] is not None else None
+
         campos_dict={
             "campo_id":campo["id"],
             "id_area":campo["id_area"],
@@ -25,7 +25,7 @@ def get_data_campos(id_area, categoria):
             "label":campo["label"],
             "type":campo["type"],
             "clase":campo["clase"],
-            "options":campo["options"],
+            "options": options,
             "default_value":campo["default_value"],
             "form_orden":campo["form_orden"],
             "id_turno":None,
@@ -54,6 +54,7 @@ def get_info_paciente(id_paciente):
     query = "SELECT * FROM pacientes WHERE id = '%s'"
     result = apiDB.consultaSelect(query,(id_paciente,))
     return result
+    
 def get_info_empresa(id_empresa):
     query = "SELECT * FROM empresas WHERE id = '%s'"
     result = apiDB.consultaSelect(query,(id_empresa,))
@@ -63,9 +64,15 @@ def get_info_campos_by_turno(id_turno):
     query = f"SELECT * FROM campos_informacion INNER JOIN campos ON id_campo = campos.id WHERE id_turno = '%s'"
     info_campo = apiDB.consultaSelect(query,(int(id_turno),))
     return info_campo
-    
+
 def generate_pdf(info_turno,info_paciente,info_empresa,ddjj_paciente,info_campos):
-    genera_ddjj(info_turno,info_paciente,ddjj_paciente)
+    if info_turno['deleted']!= None:
+        return jsonify({"error":"El turno seleccionado fué eliminado"}),401
+    if ddjj_paciente != None:
+        genera_ddjj(info_turno,info_paciente,ddjj_paciente)
+    genera_consentimiento(info_paciente, info_turno)
+    genera_clinico(info_campos, info_paciente, info_turno)
+    return True
 
 def dataCatch_pdfGenerator(id_turno):
     info_turno = get_turno_by_id(id_turno)[0]
@@ -74,4 +81,8 @@ def dataCatch_pdfGenerator(id_turno):
     ddjj_paciente = get_ddjj_paciente(info_turno['paciente_id'], info_turno['empresa_id'])
     info_campos = get_info_campos_by_turno(info_turno['id'])
 
-    generate_pdf(info_turno,info_paciente,info_empresa,ddjj_paciente,info_campos)
+    status = generate_pdf(info_turno,info_paciente,info_empresa,ddjj_paciente,info_campos)
+    return status
+
+
+
