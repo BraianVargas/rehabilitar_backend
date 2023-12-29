@@ -394,7 +394,7 @@ def genera_clinico(info_campos, info_paciente, info_turno):
     print(info_campos)
     input()
     data_clinico = [
-            [Paragraph('<h3>CONSENTIMIENTO INFORMADO PARA EXAMENES DE LABORATORIO</h3>',header_consentimiento_style)],
+            [Paragraph('<h3>Examen Clinico</h3>',header_consentimiento_style)],
             [Paragraph("Enfermedades y operaciónes previas:"), Paragraph("{}") ]
     ]
 
@@ -434,9 +434,9 @@ def genera_clinico(info_campos, info_paciente, info_turno):
     # Agregar elementos al contenido del PDF
     content.append(get_personal_data(info_paciente, info_turno, fecha))
     content.append(linea)
-    content.append(head_concentimiento_table)
-    content.append(Spacer(1, 20))
-    content.append(Paragraph(body_consentimiento.upper()))
+    # content.append(head_concentimiento_table)
+    # content.append(Spacer(1, 20))
+    # content.append(Paragraph(body_consentimiento.upper()))
     content.append(Spacer(1, 45))
     content.append(Firma)
     content.append(Spacer(1, 170))
