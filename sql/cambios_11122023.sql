@@ -3,7 +3,6 @@ use rehabilitar_testing;
 delete from campos where 1;
 
 
-SET foreign_key_checks = 0;
 drop table campos;
 drop table campos_informacion; 
 
@@ -28,11 +27,15 @@ create table campos_informacion(
     id_turno int,
     value varchar(1000),
     id_adjunto int,
+    observaciones varchar(100),
     
     primary key (id),
     foreign key (id_turno) references turnos(id),
     foreign key (id_campo) references campos(id)
 );
+
+
+select * from campos_informacion;
 
 
 select * from campos;

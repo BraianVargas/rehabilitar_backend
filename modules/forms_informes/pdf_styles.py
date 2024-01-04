@@ -34,7 +34,7 @@ style_ddjj = ParagraphStyle(
 )
 icon_span_style = ParagraphStyle(
     'span_style',
-    fontSize=12,
+    fontSize=10,
     parent=styles['Normal'],
     alignment=1,  # 0=left, 1=center, 2=right
     spaceAfter = 10,
@@ -44,7 +44,7 @@ icon_span_style = ParagraphStyle(
 )
 header_antecedentes_style = ParagraphStyle(
     'antec_styles',
-    fontSize=16,
+    fontSize=8,
     parent=styles['Heading1'],
     alignment=1,  # 0=left, 1=center, 2=right
     spaceAfter=12,

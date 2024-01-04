@@ -41,8 +41,8 @@ def save_campos(_id_area, _id_turno):
         data = request.get_json()
     else:
         data = json.loads(request.values.get('json'))
-    data = data['campos']
-    final_data = save_info_campos(data, _id_turno)
+
+    final_data = save_info_campos(data['campos'], _id_turno,_id_area, data['categoria'])
     return final_data
 
 @informesBP.route('/campos/<int:_id_turno>/get_info', methods=['POST'])

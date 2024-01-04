@@ -14,7 +14,6 @@ def ddjj_paciente():
         if request.method == 'POST':
             paciente_id = apiDB.consultaSelect("Select id from pacientes where documento = %s", [(str(_dni))])
             data = request.json.get('data')
-            
             if paciente_id != []:
                 status = save_ddjj(data,paciente_id[0]['id'],_empresa_id)
                 return status

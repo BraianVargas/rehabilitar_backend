@@ -75,7 +75,7 @@ def get_personal_data(info_paciente, info_turno, fecha):
 
 def genera_footer():
     # Footer con texto
-    footer_text = "<br/> 9 de Julio 433 Oeste - (5400) Capital - San Juan - Tels.: 0264-4202469 ó 0264-4225546 - Email: rehabilitasj@speedy.com.ar <br/> <b>Rehabilitar San Juan 2023 © Todos los derechos reservados </b> "
+    footer_text = "9 de Julio 433 Oeste - (5400) Capital - San Juan - Tels.: 0264-4202469 ó 0264-4225546 - Email: rehabilitasj@speedy.com.ar <br/> <b>Rehabilitar San Juan 2023 © Todos los derechos reservados </b> "
     footer = Paragraph(footer_text, footer_style)
     return footer
 
@@ -94,6 +94,12 @@ def get_foto_paciente(fecha,name_photo,documento_paciente,tipo):
 
     return foto_path
 
+# --------------------------------------------------------------
+# 
+#                 Genera Firma paciente
+# 
+# --------------------------------------------------------------
+
 def get_firma_paciente(fecha,name_firma, documento_paciente,tipo):
     firma_path = f"files/imagenes/{str(tipo.upper())}/{str(fecha)}/{str(documento_paciente)}/"
     if os.path.exists(firma_path):
@@ -108,6 +114,12 @@ def get_firma_paciente(fecha,name_firma, documento_paciente,tipo):
         firma_path = "static/img/firma_not_found.png"
     return firma_path
 
+
+# --------------------------------------------------------------
+# 
+#                 Genera DDJJ
+# 
+# --------------------------------------------------------------
 
 def genera_ddjj(info_turno ,info_paciente, ddjj_paciente):
 
@@ -135,113 +147,156 @@ def genera_ddjj(info_turno ,info_paciente, ddjj_paciente):
     yes_icon="<span color='green'>&#10004;</span>"
     no_icon="<span color='red'>&#10006;</span>"
     data_antecendentes = [
-            [Paragraph('<h3>Antecedentes</h3>',header_antecedentes_style)],
-            [
-                Paragraph("¿Sufrió algún accidente de tránsito?"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['accidente_transito'] == 1 else Paragraph(no_icon, style=icon_span_style)
-            ],
-            [
-                Paragraph("¿Fuma o ha fumado con anterioridad?"), Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['fuma'] == 1 else Paragraph(no_icon, style=icon_span_style),
-                Paragraph("¿Cuántos por día?"), Paragraph(str(ddjj_paciente[0]['d_fuma']), style=icon_span_style),
-            ],
-            [
-                Paragraph("¿Practica algun deporte?"), Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['deporte'] == 1 else Paragraph(no_icon, style=icon_span_style),
-                Paragraph("¿Cuál?"), Paragraph(str(ddjj_paciente[0]['d_deporte']), style=icon_span_style),
-            ],
-            [
-                Paragraph("¿Consume bebidas alcoholicas?"), Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['fuma'] == 1 else Paragraph(no_icon, style=icon_span_style),
-                Paragraph("¿Cuáles?"), Paragraph(str(ddjj_paciente[0]['d_fuma']), style=icon_span_style),
-            ],
-            [
-                Paragraph("¿Duerme bien?"), Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['fuma'] == 1 else Paragraph(no_icon, style=icon_span_style),
-                Paragraph("¿Cuántas horas por día?"), Paragraph(str(ddjj_paciente[0]['d_fuma']), style=icon_span_style),
-            ],
-    ]
-    col_widths = [3* inch, 2*cm] * 5
-    antecedentes_table = Table(data_antecendentes, col_widths)
-    antecedentes_table.setStyle(table_antecedentes_style)
-
-    data_antecendentes = [
             [Paragraph('<h3>Antecedentes Personales</h3>',header_antecedentes_style)],
             [
-                Paragraph("Dificultad en su vision"), 
+                Paragraph("Acidéz o trastornos intestinales"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['acidez'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Alergia a drogas o medicamentos"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['alergia_medicamentos'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Articulaciones dolorosas"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['dolor_articulaciones'] == 1 else Paragraph(no_icon, style=icon_span_style),
+            ],
+            [
+                Paragraph("Asma"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['asma'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Azucar en sangre (diabetes)"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['azucar'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Brucelosis o fiebre de malta"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['brucelosis'] == 1 else Paragraph(no_icon, style=icon_span_style),
+            ],
+            [
+                Paragraph("Cancer u otro tumor"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['cancer_tumor'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Confunde los colores"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['colores'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Convulciones"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['convulcion'] == 1 else Paragraph(no_icon, style=icon_span_style),
+            ],
+            [
+                Paragraph("Depresión o preocupación excesiva"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['depresion'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Dificltad en la visión"), 
                 Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['vision'] == 1 else Paragraph(no_icon, style=icon_span_style),
-                Paragraph("Cancer"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['cancer'] == 1 else Paragraph(no_icon, style=icon_span_style),
-                Paragraph("Operaciones"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['operaciones'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Dificultad para orinar"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['dificultad_orinar'] == 1 else Paragraph(no_icon, style=icon_span_style),
             ],
             [
-                Paragraph("Dificultad en la audicion"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['audio'] == 1 else Paragraph(no_icon, style=icon_span_style),
-                Paragraph("Perdida de peso"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['perdida_peso'] == 1 else Paragraph(no_icon, style=icon_span_style),
-                Paragraph("Apendicitis"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['apendicitis'] == 1 else Paragraph(no_icon, style=icon_span_style),
-            ],
-            [
-                Paragraph("Dolor de cabeza"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['dolor_cabeza'] == 1 else Paragraph(no_icon, style=icon_span_style),
-                Paragraph("Diabetes"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['diabetes'] == 1 else Paragraph(no_icon, style=icon_span_style),
-                Paragraph("Vesicula"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['vesicula'] == 1 else Paragraph(no_icon, style=icon_span_style),
-            ],
-            [
-                Paragraph("Dolor de torax"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['dolor_torax'] == 1 else Paragraph(no_icon, style=icon_span_style),
-                Paragraph("Diabetes 2"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['diabetes_2'] == 1 else Paragraph(no_icon, style=icon_span_style),
-                Paragraph("Varices"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['varices'] == 1 else Paragraph(no_icon, style=icon_span_style),
-            ],
-            [
-                Paragraph("Taquicardia o palpitaciones"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['taquicardia'] == 1 else Paragraph(no_icon, style=icon_span_style),
-                Paragraph("Tratamiento psiquiátrico"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['psiquiatrico'] == 1 else Paragraph(no_icon, style=icon_span_style),
-                Paragraph("Tumor"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['tumor'] == 1 else Paragraph(no_icon, style=icon_span_style),
-            ],
-            [
-                Paragraph("Hipertension"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['hipertension'] == 1 else Paragraph(no_icon, style=icon_span_style),
-                Paragraph("Convulsiones, epilepsia"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['epilepsia'] == 1 else Paragraph(no_icon, style=icon_span_style),
-                Paragraph("Hernias, eventraciones"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['hernias'] == 1 else Paragraph(no_icon, style=icon_span_style),
-            ],
-            [
-                Paragraph("Marcapasos"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['marcapaso'] == 1 else Paragraph(no_icon, style=icon_span_style),
-                Paragraph("Dolor de cintura"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['dolor_cintura'] == 1 else Paragraph(no_icon, style=icon_span_style),
-                Paragraph("Corazon"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['corazon'] == 1 else Paragraph(no_icon, style=icon_span_style),
-            ],
-            [
-                Paragraph("Falta de aire"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['falta_aire'] == 1 else Paragraph(no_icon, style=icon_span_style),
-                Paragraph("Dolor de espalda"), 
+                Paragraph("Dolor de espalda o cintura"), 
                 Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['dolor_espalda'] == 1 else Paragraph(no_icon, style=icon_span_style),
-                Paragraph("Rodillas"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['rodillas'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Dolor en el hjombro"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['dolor_hombro'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Dolores de cabeza frecuentes"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['dolor_cabeza'] == 1 else Paragraph(no_icon, style=icon_span_style),
             ],
             [
-                Paragraph("Hepatitis"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['hepatitis'] == 1 else Paragraph(no_icon, style=icon_span_style),
-                Paragraph("Dolor de piernas al caminar"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['dolor_piernas'] == 1 else Paragraph(no_icon, style=icon_span_style),
-                Paragraph("Tobillos"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['tobillos'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Dolores en el pecho (precordialgia)"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['dolor_pecho'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Dolores en los pies o pie plano"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['dolor_pies'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Dolores en rodillas"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['dolor_rodilla'] == 1 else Paragraph(no_icon, style=icon_span_style),
             ],
             [
-                Paragraph("Alergias"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['alergia'] == 1 else Paragraph(no_icon, style=icon_span_style),
-                Paragraph("Fracturas"), 
+                Paragraph("Enfermedad de chagas"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['chagas'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Enfermedades de la piel"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['enfermedad_piel'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Enfermedades por contacto sexual"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['enfermedad_sexual'] == 1 else Paragraph(no_icon, style=icon_span_style),
+            ],
+            [
+                Paragraph("Falta de aire (disnea)"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['falta_aire'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Familiares con tuberculosis"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['familiares_tuberculosis'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Fracturas o luxaciones"), 
                 Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['fracturas'] == 1 else Paragraph(no_icon, style=icon_span_style),
-                Paragraph("Hombros"), 
-                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['hombros'] == 1 else Paragraph(no_icon, style=icon_span_style),
+            ],
+            [
+                Paragraph("Ha sido enyesado alguna vez"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['enyesado'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Ha sido operado alguna vez"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['operado'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Hemorroides"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['hemorroides'] == 1 else Paragraph(no_icon, style=icon_span_style),
+            ],
+            [
+                Paragraph("Hernias"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['hernias'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Ictericia (derrame bilial)"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['ictericia'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Indegestión frecuente"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['indigestion'] == 1 else Paragraph(no_icon, style=icon_span_style),
+            ],
+            [
+                Paragraph("Insomnio"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['insomnio'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Intoleracia a alguna comida"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['intolerancia_comida'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Mareos o desmayos"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['mareos'] == 1 else Paragraph(no_icon, style=icon_span_style),
+            ],
+            [
+                Paragraph("Fuma"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['fuma'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Palpitaciones del corazón"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['palpitaciones'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Perdida de memoria u olvidos frecuentes"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['perdida_memoria'] == 1 else Paragraph(no_icon, style=icon_span_style),
+            ],
+            [
+                Paragraph("Perdida de peso reciente"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['perdida_peso'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Pesadillas frecuentes"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['pesadillas'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Presión sanguinea alta"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['presion_alta'] == 1 else Paragraph(no_icon, style=icon_span_style),
+            ],
+            [
+                Paragraph("Resfríos frecuentes"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['resfrios'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Sangre en esputo"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['esputo'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Sangre en orina"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['sangre_orina'] == 1 else Paragraph(no_icon, style=icon_span_style),
+            ],
+            [
+                Paragraph("Sordera o disminución de la audición"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['sordera'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Sinusitis"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['sinusitis'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Sudores nocturnos"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['sudores_nocturnos'] == 1 else Paragraph(no_icon, style=icon_span_style),
+            ],
+            [
+                Paragraph("Supuración de oídos"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['supuracion_oidos'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Trastornos biliares o hepáticos"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['hepaticos'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Ulcera gástrica o duodenal"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['ulcera_gastrica'] == 1 else Paragraph(no_icon, style=icon_span_style),
+            ],
+            [
+                Paragraph("Urticaria"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['urticaria'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Várices"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['varices'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Vomitos o acidéz"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['vomitos'] == 1 else Paragraph(no_icon, style=icon_span_style),
+            ],
+            [
+                Paragraph("Tiene indemnización pendiente"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['indemnizacion_pendiente'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Menstruaciones Dolorosas"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['dolor_menstruacion'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Flujo"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['flujo'] == 1 else Paragraph(no_icon, style=icon_span_style),
+            ],
+            [
+                Paragraph("Tuvo que abandonar algún trabajo por razones de salud"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['abandono_por_salud'] == 1 else Paragraph(no_icon, style=icon_span_style),
+                Paragraph("Recibió alguna indemnización por accidente de trabajo o enfermedad profesional"), 
+                Paragraph(yes_icon, style=icon_span_style) if ddjj_paciente[0]['recibio_indemnizacion'] == 1 else Paragraph(no_icon, style=icon_span_style),
             ],
     ]
 
@@ -252,7 +307,7 @@ def genera_ddjj(info_turno ,info_paciente, ddjj_paciente):
     
     name_photo = info_turno['firma_token']
     firma_path= get_firma_paciente(fecha, name_photo, info_paciente['documento'], "firma")
-    firma = Image(firma_path,width=120,height=60)
+    firma = Image(firma_path,width=100,height=50)
 
 
     Firma = Table(
@@ -264,27 +319,29 @@ def genera_ddjj(info_turno ,info_paciente, ddjj_paciente):
                 Spacer(15,0),Spacer(15,0),linea
             ],
             [
-                Spacer(15,0),Spacer(15,0),Paragraph("Firma del paciente")
+                Spacer(20,0),Spacer(20,0),Paragraph("Firma del paciente")
             ]
         ]
     )
     # Agregar elementos al contenido del PDF
     content.append(personal_data)
     content.append(linea)
-    content.append(Spacer(1, 20))
-    content.append(antecedentes_table)
-    content.append(Spacer(1, 20))
-    content.append(antecedentes_personales_table)
     content.append(Spacer(1, 5))
+    content.append(antecedentes_personales_table)
     content.append(Paragraph(leyenda))
-    content.append(Spacer(0, 20))
     content.append(Firma)
-    content.append(Spacer(1, 50))
+    content.append(Spacer(1, 5))
     content.append(linea)
     content.append(genera_footer())
 
     pdf.build(content)
 
+
+# --------------------------------------------------------------
+# 
+#                 Genera Consentimiento
+# 
+# --------------------------------------------------------------
 
 def genera_consentimiento(info_paciente, info_turno):
     file_path = "files/informes/temp/"
@@ -391,8 +448,6 @@ def genera_clinico(info_campos, info_paciente, info_turno):
 
     # Generar datos de la tabla
     name_photo = info_turno['img_token']
-    print(info_campos)
-    input()
     data_clinico = [
             [Paragraph('<h3>Examen Clinico</h3>',header_consentimiento_style)],
             [Paragraph("Enfermedades y operaciónes previas:"), Paragraph("{}") ]

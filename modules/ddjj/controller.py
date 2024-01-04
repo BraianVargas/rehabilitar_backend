@@ -54,8 +54,8 @@ def get_ddjj_by_id(ddjj_id):
     return result
 
 def get_ddjj_paciente(paciente_id, empresa_id):
-    query = "SELECT ddjj_id FROM fact_ddjj WHERE paciente_id = '%s' AND empresa_id = '%s'"
-    id_ddjj = apiDB.consultaSelect(query,(paciente_id,empresa_id,))
+    query = f"SELECT ddjj_id FROM fact_ddjj WHERE paciente_id = {paciente_id} AND empresa_id = {empresa_id} ORDER BY id DESC LIMIT 1"
+    id_ddjj = apiDB.consultaSelect(query)
     
     if len(id_ddjj) > 0:
         id_ddjj = int(id_ddjj[0]['ddjj_id'])
