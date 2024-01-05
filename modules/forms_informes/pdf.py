@@ -73,12 +73,22 @@ def get_personal_data(info_paciente, info_turno, fecha):
     return personal_data
 
 
+# --------------------------------------------------------------
+# 
+#                 Genera Footer
+# 
+# --------------------------------------------------------------
 def genera_footer():
     # Footer con texto
     footer_text = "9 de Julio 433 Oeste - (5400) Capital - San Juan - Tels.: 0264-4202469 ó 0264-4225546 - Email: rehabilitasj@speedy.com.ar <br/> <b>Rehabilitar San Juan 2023 © Todos los derechos reservados </b> "
     footer = Paragraph(footer_text, footer_style)
     return footer
 
+# --------------------------------------------------------------
+# 
+#                 Genera Foto Paciente
+# 
+# --------------------------------------------------------------
 def get_foto_paciente(fecha,name_photo,documento_paciente,tipo):
     foto_path="files/imagenes/"+tipo.upper()+'/'+fecha+'/'+documento_paciente+'/'
     if os.path.exists(foto_path):
@@ -134,7 +144,7 @@ def genera_ddjj(info_turno ,info_paciente, ddjj_paciente):
     content.append(linea)
 
     # Crear el documento PDF
-    file_path = file_path + info_paciente['documento'] + '- ddjj'+ '.pdf'
+    file_path = file_path + '1'+ '.pdf'
     pdf = SimpleDocTemplate(file_path, pagesize=letter, leftMargin=20, rightMargin=20, topMargin=20, bottomMargin=20)
 
     # Generar datos de la tabla
@@ -355,7 +365,7 @@ def genera_consentimiento(info_paciente, info_turno):
     content.append(linea)
     
     # Crear el documento PDF
-    file_path = file_path + info_paciente['documento'] + ' - consentimiento' + '.pdf'
+    file_path = file_path + '2' + '.pdf'
     pdf = SimpleDocTemplate(file_path, pagesize=letter, leftMargin=20, rightMargin=20, topMargin=20, bottomMargin=20)
     fecha = info_turno['fecha']
     fecha=str(fecha.year) + "/"+ str(fecha.month)+ "/"+ str(fecha.day )
@@ -428,32 +438,49 @@ def genera_consentimiento(info_paciente, info_turno):
 
     pdf.build(content)
 
-def genera_clinico(info_campos, info_paciente, info_turno):
+# --------------------------------------------------------------
+# 
+#                 Genera Exame Clínico SAS
+# 
+# --------------------------------------------------------------
+def genera_sas(info_campos, info_paciente, info_turno):
     file_path = "files/informes/temp/"
 
     if not os.path.exists(file_path):
         os.makedirs(file_path)
-    # Contenido del PDF
+
     content = []
-    header, linea = genera_cabecera(title_text = "<b>Examen Clínico</b>")
+
+    header, linea = genera_cabecera(title_text= f"<b> {str(info_campos[0]['label'])} </b>")
 
     content.append(header)
     content.append(linea)
-    
+
     # Crear el documento PDF
-    file_path = file_path + info_paciente['documento'] + ' - clinico' + '.pdf'
+    file_path = file_path + '4' + '.pdf'
     pdf = SimpleDocTemplate(file_path, pagesize=letter, leftMargin=20, rightMargin=20, topMargin=20, bottomMargin=20)
     fecha = info_turno['fecha']
     fecha = str(fecha.year) + "/"+ str(fecha.month)+ "/"+ str(fecha.day )
 
     # Generar datos de la tabla
     name_photo = info_turno['img_token']
-    data_clinico = [
-            [Paragraph('<h3>Examen Clinico</h3>',header_consentimiento_style)],
-            [Paragraph("Enfermedades y operaciónes previas:"), Paragraph("{}") ]
-    ]
 
-    col_widths = [3.5* inch, 2 *inch] * 1
+    data_clinico = [
+        [Paragraph(info_campos[0]["label"], header_consentimiento_style)],
+    ]
+    i = 3
+    while i < len(info_campos):
+        data_clinico.append(
+            [
+                Paragraph(f"{info_campos[i]['label']}"),
+                Paragraph(f"{str(info_campos[i]['value'])}"),
+                Paragraph(f"{info_campos[i+1]['label']}"),
+                Paragraph(f"{str(info_campos[i+1]['value'])}")
+            ]
+        )
+        i = i + 2
+
+    col_widths = [2.5* inch, 1.5 *inch, 2.5 * inch , 1.5*inch] * 30
     data_clinico_table = Table(data_clinico, col_widths)
     data_clinico_table.setStyle(table_antecedentes_style)
     
@@ -489,12 +516,120 @@ def genera_clinico(info_campos, info_paciente, info_turno):
     # Agregar elementos al contenido del PDF
     content.append(get_personal_data(info_paciente, info_turno, fecha))
     content.append(linea)
-    # content.append(head_concentimiento_table)
-    # content.append(Spacer(1, 20))
-    # content.append(Paragraph(body_consentimiento.upper()))
-    content.append(Spacer(1, 45))
+    content.append(data_clinico_table)
+    content.append(Spacer(1, 250))
     content.append(Firma)
-    content.append(Spacer(1, 170))
+    content.append(Spacer(1, 250))
+    content.append(linea)
+    content.append(genera_footer())
+
+    pdf.build(content)
+# --------------------------------------------------------------
+# 
+#                 Genera Examen Clínico
+# 
+# --------------------------------------------------------------
+
+def genera_clinico(info_campos, info_paciente, info_turno):
+    file_path = "files/informes/temp/"
+
+    if not os.path.exists(file_path):
+        os.makedirs(file_path)
+    # Contenido del PDF
+    content = []
+    header, linea = genera_cabecera(title_text = f"<b>{info_campos[0]['label']}</b>")
+
+    content.append(header)
+    content.append(linea)
+    
+    # Crear el documento PDF
+    file_path = file_path + '3' + '.pdf'
+    pdf = SimpleDocTemplate(file_path, pagesize=letter, leftMargin=20, rightMargin=20, topMargin=20, bottomMargin=20)
+    fecha = info_turno['fecha']
+    fecha = str(fecha.year) + "/"+ str(fecha.month)+ "/"+ str(fecha.day )
+
+    # Generar datos de la tabla
+    name_photo = info_turno['img_token']
+        
+    data_clinico = [
+        [Paragraph(info_campos[0]["label"], header_consentimiento_style)],
+    ]
+    i = 3
+    observaciones_agregadas = set() 
+    while i < len(info_campos):
+        if info_campos[i]['observaciones'] == "general" and info_campos[i]['label'] not in observaciones_agregadas:
+            data_clinico.append(
+                [
+                    Paragraph(f"{info_campos[i]['label']}"),
+                    Paragraph(f"{str(info_campos[i]['value'])}"),
+                    Paragraph(f"{info_campos[i+1]['label']}"),
+                    Paragraph(f"{str(info_campos[i+1]['value'])}")
+                ]
+            )
+            observaciones_agregadas.add(info_campos[i]['label'])
+
+        i = i + 2
+    sas_gen = nor_gen = pre_gen = False
+
+    sas = []
+    for campo in info_campos:
+        observaciones = campo['observaciones']
+        if not sas_gen and observaciones!=None and "sas" in observaciones:
+            sas.append(campo)
+        
+        # if not nor_gen and "nordico" in observaciones:
+        #     genera_nordico(campo)
+        #     nor_gen = True
+
+        # if not pre_gen and "preocupacional" in observaciones:
+        #     genera_preocupacional(campo)
+        #     pre_gen = True
+            
+
+    if len(sas) != 0:
+        genera_sas(sas, info_paciente, info_turno)
+    
+  
+    col_widths = [2.5* inch, 1.5 *inch, 2.5 * inch , 1.5*inch] * 30
+    data_clinico_table = Table(data_clinico, col_widths)
+    data_clinico_table.setStyle(table_antecedentes_style)
+    
+    locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8') 
+
+
+    name_photo = info_turno['firma_token']
+    firma_path= get_firma_paciente(fecha, name_photo, info_paciente['documento'], "firma")
+    firma = Image(firma_path,width=120,height=60)
+
+
+    Firma = Table(
+        [
+            [
+                firma,
+                Spacer(10,0),
+                Paragraph(f"{info_paciente['apellidos']}, {info_paciente['nombres']}")
+            ],
+            [
+                linea,
+                Spacer(10,0),
+                linea
+            ],
+            [
+                Paragraph("Firma del postulante"),
+                Spacer(10,0),
+                Paragraph("Aclaración")
+            ]
+        ]
+    )
+
+
+    # Agregar elementos al contenido del PDF
+    content.append(get_personal_data(info_paciente, info_turno, fecha))
+    content.append(linea)
+    content.append(data_clinico_table)
+    content.append(Spacer(1, 50))
+    content.append(Firma)
+    content.append(Spacer(1, 100))
     content.append(linea)
     content.append(genera_footer())
 

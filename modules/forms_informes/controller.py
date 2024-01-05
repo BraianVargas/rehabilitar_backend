@@ -3,8 +3,10 @@ import json
 
 from ..turnos.controller import *
 from ..ddjj.controller import *
+from .pdfs.combina_pdfs import *
 from .pdf import *
 import apiDB
+    
 
 def get_data_campos(id_area, categoria):
     if id_area == 2:
@@ -44,13 +46,20 @@ def save_info_campos(data, _id_turno, _id_area, categoria):
                 info['campo_id'],
                 _id_turno,
                 info['value'],
-                str(list(info['id_adjunto'])) if info['id_adjunto']!=None else '' ,
+                str(list(info['id_adjunto'])) if info['id_adjunto']!=None else '',
                 str(categoria)
                 )
             )
         else:
             query = "INSERT INTO campos_informacion (id_campo, id_turno, value, id_adjunto) values (%s,%s,%s,%s)"
-            apiDB.consultaGuardar(query, (info['campo_id'], _id_turno, info['value'],str(list(info['id_adjunto']))))
+            apiDB.consultaGuardar(
+                query, (
+                    info['campo_id'],
+                    _id_turno, 
+                    info['value'],
+                    str(list(info['id_adjunto'])) if info['id_adjunto']!=None else ''
+                )
+            )
         data_to_save = {
             "campo_id" : info['campo_id'],
             "id_turno" : _id_turno,
@@ -94,6 +103,7 @@ def dataCatch_pdfGenerator(id_turno):
     info_campos = get_info_campos_by_turno(info_turno['id'])
 
     status = generate_pdf(info_turno,info_paciente,info_empresa,ddjj_paciente,info_campos)
+    
     return status
 
 
