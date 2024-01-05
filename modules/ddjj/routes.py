@@ -12,7 +12,7 @@ def ddjj_paciente():
         _dni = request.args.get('dni')
         _empresa_id = request.args.get('empresa_id')
         if request.method == 'POST':
-            paciente_id = apiDB.consultaSelect("Select id from pacientes where documento = %s", [(str(_dni))])
+            paciente_id = apiDB.consultaSelect("Select id from pacientes where documento = %s order by id desc limit 1", [(str(_dni))])
             data = request.json.get('data')
             if paciente_id != []:
                 status = save_ddjj(data,paciente_id[0]['id'],_empresa_id)
@@ -39,14 +39,19 @@ def consulta_ddjj():
             if not (apiOperacionesComunes.verificaToken(token)):
                 return apiOperacionesComunes.respJson('no',"El token no es correcto o a expirado",{})
             
-
-            paciente = apiDB.consultaSelect("Select * from pacientes where documento = %s", [(str(_dni))])
+            paciente = apiDB.consultaSelect("Select distinct * from pacientes where documento = %s order by id desc limit 1", [(str(_dni))])
             ddjj_token = apiDB.consultaSelect("Select token_ddjj from fact_ddjj where paciente_id=%s and empresa_id=%s", [(str(paciente[0]['id'])),(str(_empresa_id))])
-            ddjj = apiDB.consultaSelect("Select * from ddjj where token = %s", [(str(ddjj_token[0]['token_ddjj']))])
-            return jsonify({
-                "paciente":paciente[0],
-                "data_ddjj":ddjj[0]
-            })
+            if len(ddjj_token)!=0:
+                ddjj = apiDB.consultaSelect("Select * from ddjj where token = %s", [(str(ddjj_token[0]['token_ddjj']))])
+                if len(ddjj)!=0:
+                    return jsonify({
+                        "paciente":paciente[0],
+                        "data_ddjj":ddjj[0]
+                    })
+                else:
+                    return jsonify({"error":"No existe o no se encuentra la Declaración Jurada"}),404
+            else:
+                return jsonify({"error":"No existe o no se encuentra la Declaración Jurada"}),404
         else:
             pass
     except Exception as e:

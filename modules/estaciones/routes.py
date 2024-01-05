@@ -16,7 +16,7 @@ def middle_verif_token():
             return apiOperacionesComunes.respJson('no',"El token no es correcto o a expirado",{})
     else:
         pass
-
+    
 @estacionesBP.route('/finaliza_atencion', methods=['POST'])
 def fin_atencion():
     data = request.get_json()
@@ -34,7 +34,7 @@ def get_areas_atendidas():
         mm = data["month"]
         yyyy = data['year']
         fecha=f"{yyyy}-{mm}-{dd}"
-        areas = apiDB.consultaSelect(f"select * from area")
+        areas = get_areas_by_tipo_ficha(data['id_turno'])
         atendidas = apiDB.consultaSelect(f"select * from fact_asistencia_estaciones where id_turno = {data['id_turno']} and DATE(created_at)='{fecha}'")
         estado = False
         for area in areas:
