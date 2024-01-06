@@ -32,20 +32,17 @@ def update_ddjj(ddjj_id=None,data=None):
     if ddjj_id!=None:
         keys = list(data.keys())
         values = list(data.values())
-
         # ---------- Arma la query ----------
         query = f'UPDATE ddjj SET '
         for index, (key, value) in enumerate(data.items()):
-            if isinstance(value, bool):
-                query += f"{key}={value}" if index == len(data) - 1 else f"{key}={value}, "
-            else:
-                query += f"{key}='{value}'" if index == len(data) - 1 else f"{key}='{value}', "
-        query += f"WHERE id={ddjj_id};"
-        
-        print(query)
+            if key != "id":
+                if isinstance(value, bool) or isinstance(value, int) or isinstance(value, float):
+                    query += f"{key}={value}" if index == len(data) - 1 else f"{key}={value}, "
+                else:
+                    query += f"{key}='{value}'" if index == len(data) - 1 else f"{key}='{value}', "
+        query += f" WHERE id={ddjj_id};"
 
         apiDB.consultaUpdate(query)
-
         return jsonify({'Mensaje': 'Datos procesados exitosamente'}), 200
     
 def get_ddjj_by_id(ddjj_id):

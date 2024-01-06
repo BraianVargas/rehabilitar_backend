@@ -29,7 +29,7 @@ def combinar_pdfs(input_folder, output_file):
         pdf_writer.write(output_pdf)
 
 # Ejemplo de uso
-input_folder = "files/informes/temp"  # Reemplaza con la ruta real de tus archivos PDF
-output_file = "files/informes/temp/comb/combined.pdf"  # Ruta para el PDF combinado
+# input_folder = "files/informes/temp"  # Reemplaza con la ruta real de tus archivos PDF
+# output_file = "files/informes/temp/comb/combined.pdf"  # Ruta para el PDF combinado
 
-combinar_pdfs(input_folder, output_file)
+# combinar_pdfs(input_folder, output_file)
