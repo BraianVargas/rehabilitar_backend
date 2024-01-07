@@ -6,8 +6,8 @@ LIMIT 0, 1000
 */
 CREATE TABLE `area` (
   `id` int NOT NULL,
-  `Descripcion` varchar(255) DEFAULT NULL,
-  `Consultorio` int DEFAULT NULL,
+  `descripcion` varchar(255) DEFAULT NULL,
+  `consultorio` int DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 INSERT INTO `area` (`id`,`Descripcion`,`Consultorio`) VALUES (0,'AREA SECRETARIAS',0);
